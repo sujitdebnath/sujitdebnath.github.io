@@ -90,6 +90,6 @@ body {
     border: 4px solid #000000;
 }
 #space-list-item ul li:not(:last-child) {
-    margin-bottom: 15px;
+    margin-bottom: 14px;
 }
 /*# sourceMappingURL=style.min.css.map */
