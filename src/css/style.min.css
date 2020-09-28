@@ -92,4 +92,12 @@ body {
 #space-list-item ul li:not(:last-child) {
     margin-bottom: 14px;
 }
+q {
+    font-style: italic;
+    max-width: 80%;
+    text-align: center; 
+    margin: 0 auto;
+    width: auto;
+    display: table;
+}
 /*# sourceMappingURL=style.min.css.map */
