@@ -393,53 +393,16 @@ ninja.data = [{
             window.location.href = "/blog/2015/formatting-and-links/";
           
         },
-      },{id: "news-a-simple-inline-announcement",
-          title: 'A simple inline announcement.',
+      },{id: "news-joined-as-a-working-student-software-engineer-in-automation-at-elektrobit-automotive-gmbh-erlangen-de",
+          title: 'Joined as a Working Student - Software Engineer in Automation at Elektrobit Automotive...',
           description: "",
-          section: "News",},{id: "news-a-long-announcement-with-details",
-          title: 'A long announcement with details',
+          section: "News",},{id: "news-joined-as-a-working-student-data-analyst-at-bmw-group-munich-de",
+          title: 'Joined as a Working Student - Data Analyst at BMW Group, Munich, DE....',
           description: "",
-          section: "News",handler: () => {
-              window.location.href = "/news/announcement_2/";
-            },},{id: "news-a-simple-inline-announcement-with-markdown-emoji-sparkles-smile",
-          title: 'A simple inline announcement with Markdown emoji! :sparkles: :smile:',
+          section: "News",},{id: "news-joined-as-a-working-student-data-quality-manager-at-checkmybus-gmbh-nürnberg-de",
+          title: 'Joined as a Working Student – Data Quality Manager at CheckMyBus GmbH, Nürnberg,...',
           description: "",
           section: "News",},{
-        id: 'social-email',
-        title: 'email',
-        section: 'Socials',
-        handler: () => {
-          window.open("mailto:%73%75%6A%69%74.%64%65%62%6E%61%74%68.%62%64@%67%6D%61%69%6C.%63%6F%6D", "_blank");
-        },
-      },{
-        id: 'social-github',
-        title: 'GitHub',
-        section: 'Socials',
-        handler: () => {
-          window.open("https://github.com/sujitdebnath", "_blank");
-        },
-      },{
-        id: 'social-linkedin',
-        title: 'LinkedIn',
-        section: 'Socials',
-        handler: () => {
-          window.open("https://www.linkedin.com/in/sujit-debnath", "_blank");
-        },
-      },{
-        id: 'social-researchgate',
-        title: 'ResearchGate',
-        section: 'Socials',
-        handler: () => {
-          window.open("https://www.researchgate.net/profile/Sujit-Debnath/", "_blank");
-        },
-      },{
-        id: 'social-x',
-        title: 'X',
-        section: 'Socials',
-        handler: () => {
-          window.open("https://twitter.com/SujitDeb007", "_blank");
-        },
-      },{
       id: 'light-theme',
       title: 'Change theme to light',
       description: 'Change the theme of the site to Light',
