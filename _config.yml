@@ -147,8 +147,6 @@ collections:
     defaults:
       layout: post
     output: true
-  projects:
-    output: true
 
 # -----------------------------------------------------------------------------
 # Jekyll settings
@@ -261,8 +259,8 @@ display_categories: ["research"] # these categories will be displayed on the fro
 # -----------------------------------------------------------------------------
 
 scholar:
-  last_name: [Einstein]
-  first_name: [Albert, A.]
+  last_name: [Debnath]
+  first_name: [Sujit]
 
   style: apa
   locale: en
