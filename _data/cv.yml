@@ -1,97 +1,213 @@
-- title: General Information
+- title: General Info
   type: map
   contents:
-    - name: Full Name
-      value: Albert Einstein
-    - name: Date of Birth
-      value: 14th March 1879
-    - name: Languages
-      value: English, German
+    - name: Name
+      value: Sujit Debnath
+    - name: Phone
+      value: +49 157 31158609
+    - name: Email
+      value: sujit [dot] debnath [dot] bd [at] gmail [dot] com
+    - name: Address
+      value: Peterstraße 36, 90478 Nürnberg, Germany
 
 - title: Education
   type: time_table
   contents:
-    - title: PhD
-      institution: University of Zurich, Zurich, Switzerland
-      year: 1905
+    - title: Master of Science in <i>Artificial Intelligence</i>
+      institution: <a href="https://www.fau.eu">Friedrich-Alexander-Universität Erlangen-Nürnberg</a>
+      location: Erlangen, DE
+      year: 2021 - present
       description:
-        - Description 1.
-        - Description 2.
-        - title: Description 3.
+        - <b>CGPA:</b> 1.8 (on German Grading Scale)
+        - title: Elective Modules
           contents:
-            - Sub-description 1.
-            - Sub-description 2.
-    - title: Federal teaching diploma
-      institution: Eidgenössische Technische Hochschule, Zurich, Switzerland
-      year: 1900
+            - Artificial Intelligence I
+            - Pattern Recognition
+            - Introduction to Explainable Machine Learning
+            - Machine Learning for Time Series
+            - Speech and Language Understanding
+            - Computer Vision
+            - AI Software Applications (Data Engineering)
+            - Advanced Programming Techniques
+            - Human Computer Interaction
+            - Human-Robot Co-Adaptation
+            - Intent Detection and Feedback
+            - Information Visualization
+            - Connected Mobility and Autonomous Driving
+            - Cognitive Neuroscience for AI Developers
+        - title: Minor Modules
+          contents:
+            - Business Intelligence
+            - People Analytics - Data Science for HR Management
+            - Foundations of International Management I + Seminar
+            - Interdisciplinary Business Seminar
+        - title: Seminar
+          contents:
+            - Ethics and Philosophy of AI
+            - Fantastic Datasets and Where to Find Them
+
+    - title: Bachelor of Science in <i>Computer Science and Engineering</i>
+      institution: <a href="https://www.northsouth.edu">North South University</a>
+      location: Dhaka, BD
+      year: 2015 - 2018
       description:
-        - Description 1.
-        - Description 2.
+        - <b>CGPA:</b> 3.66 out of 4.00
+        - title: CS Courses
+          contents:
+            - CSE225 Data Structures and Algorithms
+            - CSE231 Digital Logic Design
+            - CSE311 Database Systems
+            - CSE323 Operating Systems Design
+            - CSE327 Software Engineering
+            - CSE331 Microprocessor Interfacing & Embedded System
+            - CSE332 Computer Organization and Architecture
+            - CSE338 Computer Networks
+            - CSE373 Design and Analysis of Algorithms
+            - CSE445 Machine Learning
+            - CSE470 Theory of Fuzzy Systems
+        - title: Mathematical Courses
+          contents:
+            - MAT125 Introduction to Linear Algebra
+            - MAT350 Engineering Mathematics
+            - MAT361 Probability and Statistics
+
+    - title: Higher Secondary Certificate <i>(Science Group)</i>
+      institution: <a href="https://dhakacollege.edu.bd">Dhaka College</a>
+      location: Dhaka, BD
+      year: 2011 - 2013
+      description:
+        - <b>GPA:</b> 5.00 out of 5.00
+
+    - title: Secondary School Certificate <i>(Science Group)</i>
+      institution: <a href="https://www.facebook.com/rehs108012/">Rampura Ekramunnesa Boys' High School</a>
+      location: Dhaka, BD
+      year: 2009 - 2011
+      description:
+        - <b>GPA:</b> 5.00 out of 5.00
 
 - title: Experience
   type: time_table
   contents:
-    - title: Professor of Theoretical Physics
-      institution: Institute for Advanced Study, Princeton University
-      year: 1933 - 1955
+    - title: Working Student - Data Quality Manager
+      institution: <a href="https://www.checkmybus.com">CheckMyBus GmbH</a>
+      location: Nürnberg, DE
+      year: Oct'24 - present
       description:
-        - Description 1.
-        - Description 2.
-        - title: Description 3.
+        - Ensure high data integrity via regular quality checks and CMS integration from different mobility partners.
+        - Support Business Operations team with data quality and administrative tasks to ensure smooth workflows.
+        - Monitor and analyze KPIs of various mobility partners to optimize service offerings across markets.
+        - Collaborate with international teams to maintain accurate, up-to-date global intercity connection data.
+        - title: "Supervisors:"
           contents:
-            - Sub-description 1.
-            - Sub-description 2.
-    - title: Visiting Professor
-      institution: California Institute of Technology, Pasadena, California, US
-      year: 1933
+            - <b>Mahamudul Hasan</b>, Head of Business Operations, CheckMyBus GmbH.
+            - <b>Marc Hofmann</b>, CEO, CheckMyBus GmbH.
+
+    - title: Working Student - Data Analyst
+      institution: <a href="https://www.bmwgroup.com/en.html">BMW Group</a>
+      location: Munich, DE
+      year: Jul'23 - Sep'24
       description:
-        - Description 1.
-        - Description 2.
+        - Contributed to Conformity of Production (CoP) digitization project by enhancing analytics workflows.
+        - Collaborated with CoP team to develop data dashboards using Oracle APEX and SQL for real-time insights.
+        - Aligned with stakeholders to fulfil specific data analytics needs, enabling data-driven decision-making.
+        - Utilized MS Excel, Oracle DB and Python to automate data pipeline, optimizing data analysis processes.
+        - title: "Supervisors:"
+          contents:
+            - <b>Kristina Widoretno</b> Sub Product Owner Realtime 3D Application, TP-S-31 Virtual Plant, BMW Group.
+            - <b>Christoph Goldmann</b>, Product Owner CoP-IT-Steering Solution, EG-800 CoP, In-Service Conformity, BMW Group.
+            - <b>Andreas Witzgall</b>, Group Leader, EG-800 CoP, In-Service Conformity, BMW Group.
 
-    - title: Director
-      institution: Kaiser Wilhelm Institute for Physics, Berlin, Germany.
-      year: 1917-1933
-
-    - title: Professor of Theoretical Physics
-      institution: Karl-Ferdinand University, Prague, Czechoslovakia
-      year: 1911 - 1917
+    - title: Working Student - Software Engineer in Automation
+      institution: <a href="https://www.elektrobit.com">Elektrobit Automotive GmbH</a>
+      location: Erlangen, DE
+      year: Jul'22 - Apr'23
       description:
+        - Engaged in a significant project involving emergency update automation for Volkswagen's EV.
+        - Investigated automation options, and implemented Python & Bash scripts for flashing automotive ECUs.
+        - Utilized GitHub for version control, managed project workflows & documentation with Jira, Confluence.
+        - title: "Supervisor:"
+          contents:
+            - <b>Stefan Weigand</b>, Team Manager, Verification & Validation Solutions (VVS), Elektrobit Automotive GmbH.
 
-    - title: Associate Professor of Theoretical Physics
-      institution: University of Zurich, Zurich, Switzerland
-      year: 1909 - 1911
+    - title: Project Coordinator
+      institution: <a href="https://www.robi.com.bd/en">Robi Axiata Limited</a>
+      location: Dhaka, BD
+      year: Feb'20 - Jan'22
+      description:
+        - Created performance reports, including pre-post KPI analysis, worse cell identification and tracking.
+        - Developed & optimized SQL queries to efficiently extract and analyze performance data from Oracle DB.
+        - Designed and implemented the <a href="https://www.microsoft.com/en-ww/microsoft-365/business/microsoft-kaizala">MS Kaizala</a> Message Alert system using Python, SQL, and REST APIs.
+        - title: "Supervisors:"
+          contents:
+            - <b>Md. Khalid Al Mahfuz</b>, General Manager, Network Analysis Team, Department of Analytics Center of Excellence, Robi Axiata Limited.
+            - <b>Md. Arshad Ali</b>, Manager, Network Analysis Team, Department of Analytics Center of Excellence, Robi Axiata Limited.
 
-- title: Open Source Projects
+    - title: Lab Officer
+      institution: <a href="http://www.northsouth.edu">North South University</a>
+      location: Dhaka, BD
+      year: Jan'19 - Dec'19
+      description:
+        - Conducted interactive lab sessions, and developed comprehensive laboratory materials & curriculum.
+        - title: "Conduct lab classes for the following courses:"
+          contents:
+            - CSE115L Programming Language I Lab
+            - CSE215L Programming Language II Lab
+            - CSE225L Data Structures and Algorithms Lab
+            - CSE311L Database Systems Lab
+        - title: "Affiliated Instructors:"
+          contents:
+            - <b>Dr. Abu Sayed Md. Latiful Hoque</b>, Professor, Department of Computer Science and Engineering, Bangladesh University of Engineering and Technology.
+            - <b>Dr. B M Mainul Hossain</b>, Professor & Director, Institute of Information Technology, University of Dhaka.
+            - <b>Mr. Rashed Shelim</b>, Senior Lecturer, Department of Electrical and Computer Engineering, North South University.
+
+    - title: Under-Graduate Assistant
+      institution: <a href="http://www.northsouth.edu">North South University</a>
+      location: Dhaka, BD
+      year: Jan'19 - Apr'19
+      description:
+        - Conducted tutorial sessions for students and assisted faculty members in course-related tasks.
+        - Assisted faculty members for CSE115 Programming Language I
+        - title: "Affiliated Instructors:"
+          contents:
+            - <b>Dr. A. K. M. Ashikur Rahman</b>, Professor, Department of Computer Science and Engineering, Bangladesh University of Engineering and Technology.
+            - <b>Dr. Muhammad Asif Hossain Khan</b>, Professor, Department of Computer Science and Engineering, University of Dhaka.
+
+- title: Extracurricular Activities
   type: time_table
   contents:
-    - title: <a href="https://github.com/alshedivat/al-folio">al-folio</a>
-      year: 2015-now
-      description: A beautiful, simple, clean, and responsive Jekyll theme for academics.
+    - title: Member
+      institution: <a href="https://www.facebook.com/nsuproblemsolvers/">NSU Problem Solvers (NSUPS)</a>
+      location: Dhaka, BD
+      year: 2015 - 2016
+      description: NSUPS is a dynamic community dedicated to encouraging a culture of competitive programming at North South University. As a devoted member, I actively participated in stimulating programming competitions organized by NSUPS, honing my problem-solving and coding skills. This experience gave me a competitive edge and boosted my analytical abilities, cultivating a deep passion for the art of programming.
+
+    - title: Volunteer
+      institution: <a href="https://jaago.com.bd/">JAAGO Foundation</a>
+      location: Dhaka, BD
+      year: 2014 - 2015
+      description: Committed to the transformative power of education, I have dedicated myself to the JAAGO Foundation since 2014. This organization provides free education and benefits to underprivileged children in Bangladesh. My journey involved active participation in events like World Environment Day and contributing to youth empowerment. Volunteering at JAAGO taught me teamwork, leadership, and communication skills, reinforcing my belief in education's potential to change lives.
+
+    - title: Community Volunteer
+      institution: <a href="https://vbd.com.bd/">Volunteer for Bangladesh (VBD)</a>
+      location: Dhaka, BD
+      year: 2014 - 2015
+      description: Embracing the spirit of volunteerism, I joined Volunteer for Bangladesh (VBD) in 2014, a non-political volunteer and youth wing of the JAAGO Foundation. My journey with VBD in the Dhaka division led me to diverse events, including Universal Children's Day and the Great Kindness Challenge. These experiences highlighted the relentless passion of my fellow volunteers and culminated in significant contributions, such as our effort to collect approximately 12,000 BDT from the generous locals of Banani, Dhaka, during Universal Children's Day in 2015. Through VBD, I developed valuable interpersonal skills in teamwork and effective leadership, solidifying my belief in the transformative potential of community engagement.
 
 - title: Honors and Awards
   type: time_table
   contents:
-    - year: 1921
+    - year: 2019
       items:
-        - Nobel Prize in Physics
-        - Matteucci Medal
-    - year: 2029
+        - <b>BSc Academic Distinction:</b> Graduated with magna cum laude distinction for getting 90% marks at NSU.
+    - year: 2015 - 2018
       items:
-        - Max Planck Medal
+        - <b>NSU Board of Trustee Scholarship:</b> Awarded 25% tuition waiver for academic excellence in BSc.
+    - year: 2011
+      items:
+        - <b>Golden A+:</b> Achieved the highest GPA of 5.00/5.00 across all nine subjects in Secondary School Certificate (SSC) exam.
 
-- title: Academic Interests
-  type: nested_list
-  contents:
-    - title: Topic 1.
-      items:
-        - Description 1.
-        - Description 2.
-    - title: Topic 2.
-      items:
-        - Description 1.
-        - Description 2.
-
-- title: Other Interests
+- title: Languages & Hobbies
   type: list
   contents:
-    - <u>Hobbies:</u> Hobby 1, Hobby 2, etc.
+    - <b>Languages:</b> English (Proficient), Deutsch (A1), and Bengali (Native).
+    - <b>Hobbies:</b> Reading Books, Cycling, and Cooking.
