@@ -6,7 +6,7 @@
     - name: Phone
       value: +49 157 31158609
     - name: Email
-      value: sujit [dot] debnath [dot] bd [at] gmail [dot] com
+      value: sujit.debnath.bd@gmail.com
     - name: Address
       value: Peterstraße 36, 90478 Nürnberg, Germany
 
@@ -54,6 +54,7 @@
         - <b>CGPA:</b> 3.66 out of 4.00
         - title: CS Courses
           contents:
+            - CSE173 Discrete Mathematics
             - CSE225 Data Structures and Algorithms
             - CSE231 Digital Logic Design
             - CSE311 Database Systems
@@ -63,6 +64,7 @@
             - CSE332 Computer Organization and Architecture
             - CSE338 Computer Networks
             - CSE373 Design and Analysis of Algorithms
+            - CSE425 Concepts of Programming Language
             - CSE445 Machine Learning
             - CSE470 Theory of Fuzzy Systems
         - title: Mathematical Courses
@@ -206,7 +208,7 @@
       items:
         - <b>Golden A+:</b> Achieved the highest GPA of 5.00/5.00 across all nine subjects in Secondary School Certificate (SSC) exam.
 
-- title: Languages & Hobbies
+- title: Languages and Hobbies
   type: list
   contents:
     - <b>Languages:</b> English (Proficient), Deutsch (A1), and Bengali (Native).

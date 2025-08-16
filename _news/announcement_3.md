@@ -1,8 +1,8 @@
 ---
 layout: post
-date: 2016-01-15 07:59:00-0400
+date: 2024-10-15 09:30:00-0400
 inline: true
 related_posts: false
 ---
 
-A simple inline announcement with Markdown emoji! :sparkles: :smile:
+Joined as a _Working Student – Data Quality Manager_ at [CheckMyBus GmbH](https://www.checkmybus.com/), Nürnberg, DE.
