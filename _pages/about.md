@@ -2,7 +2,7 @@
 layout: about
 title: about
 permalink: /
-subtitle: 'Grad Student in <i>AI</i> @ <a href="https://www.fau.eu">FAU Erlangen-Nürnberg</a> | Email: sujit.debnath.bd@gmail.com | Phone: +49 157 31158609'
+subtitle: 'Grad Student in AI @ <a href="https://www.fau.eu">FAU Erlangen-Nürnberg</a> &nbsp;| &nbsp; Email: sujit.debnath.bd@gmail.com &nbsp; | &nbsp; Phone: +49 157 31158609'
 
 profile:
   align: right
