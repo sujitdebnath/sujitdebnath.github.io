@@ -38,7 +38,7 @@ ninja.data = [{
         section: "Posts",
         handler: () => {
           
-            window.location.href = "/blog/2025/photo-gallery/";
+            window.location.href = "/blog/2025/cheleta/";
           
         },
       },{id: "post-a-distill-style-blog-post",
