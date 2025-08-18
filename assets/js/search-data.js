@@ -30,7 +30,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/blog/";
           },
-        },{id: "post-ছেলেটা",
+        },{id: "post-তন্ময়কে-লেখা-খোলা-চিঠি",
+        
+          title: "তন্ময়কে লেখা খোলা চিঠি",
+        
+        description: "এক পুরনো বন্ধুর উদ্দেশ্যে লেখা চিঠি—যেখানে লুকিয়ে আছে কিছু হতাশা ও না বলা তীব্র বেদনা।",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/khola-chithi-tonmoy/";
+          
+        },
+      },{id: "post-ছেলেটা",
         
           title: "ছেলেটা",
         
