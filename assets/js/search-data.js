@@ -30,7 +30,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/blog/";
           },
-        },{id: "post-তন্ময়কে-লেখা-খোলা-চিঠি",
+        },{id: "post-এপিটাফ",
+        
+          title: "এপিটাফ",
+        
+        description: "একটি অসমাপ্ত ভালবাসার গল্প",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/epitaph/";
+          
+        },
+      },{id: "post-তন্ময়কে-লেখা-খোলা-চিঠি",
         
           title: "তন্ময়কে লেখা খোলা চিঠি",
         
