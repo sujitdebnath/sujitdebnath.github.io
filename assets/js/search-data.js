@@ -34,7 +34,7 @@ ninja.data = [{
         
           title: "এপিটাফ",
         
-        description: "একটি অসমাপ্ত ভালবাসার গল্প",
+        description: "একটি অসম্পূর্ণ ভালবাসার গল্প",
         section: "Posts",
         handler: () => {
           
