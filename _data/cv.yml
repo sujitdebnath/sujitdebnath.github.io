@@ -8,7 +8,7 @@
     - name: Email
       value: sujit.debnath.bd@gmail.com
     - name: Address
-      value: Peterstraße 36, 90478 Nürnberg, Germany
+      value: Nürnberg, Germany
 
 - title: Education
   type: time_table
