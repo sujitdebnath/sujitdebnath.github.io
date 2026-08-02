@@ -1,0 +1,32 @@
+<!doctype html>
+<!--
+  GitHub Pages has no server-side routing, so a hard refresh on e.g.
+  /blog/epitaph returns a real 404 instead of your app. GitHub serves this
+  file for any unknown path — it re-encodes the path into a query string
+  and redirects to index.html, which decodes it back (see the script in
+  index.html <head>) before React Router ever sees it.
+
+  pathSegmentsToKeep:
+    - 0 if deployed at the domain root, e.g. https://username.github.io/  (current setting)
+    - 1 if deployed under a repo subpath, e.g. https://username.github.io/portfolio/
+  Keep this in sync with `base` in vite.config.js.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirecting…</title>
+    <script>
+      // https://github.com/rafgraph/spa-github-pages
+      var pathSegmentsToKeep = 0
+      var l = window.location
+      l.replace(
+        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+        l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
+        l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+        (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+        l.hash
+      )
+    </script>
+  </head>
+  <body></body>
+</html>

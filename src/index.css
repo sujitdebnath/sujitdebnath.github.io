@@ -1,0 +1,306 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  ::selection {
+    background-color: theme('colors.marker.DEFAULT');
+    color: theme('colors.marker.ink');
+  }
+
+  /* Visible keyboard focus everywhere */
+  :focus-visible {
+    outline: 2px solid theme('colors.marker.DEFAULT');
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+@layer components {
+  /* The signature "highlighter" mark: an inline underline/highlight that
+     sweeps in from the left, like a pen dragged under or through text. */
+  .mark-line {
+    background-image: linear-gradient(theme('colors.marker.DEFAULT'), theme('colors.marker.DEFAULT'));
+    background-repeat: no-repeat;
+    background-position: 0 88%;
+    background-size: 0% 0.3em;
+    transition: background-size 0.35s ease;
+  }
+  .mark-line:hover,
+  .mark-line.is-active {
+    background-size: 100% 0.3em;
+  }
+
+  .mark-block {
+    background-image: linear-gradient(theme('colors.marker.soft'), theme('colors.marker.soft'));
+    background-repeat: no-repeat;
+    background-position: 0 55%;
+    background-size: 0% 60%;
+    transition: background-size 0.5s ease;
+  }
+  .mark-block.in-view {
+    background-size: 100% 60%;
+  }
+
+  .eyebrow {
+    @apply font-mono text-[11px] uppercase tracking-[0.18em] text-ink-muted dark:text-parchment-muted;
+  }
+
+  .hairline {
+    @apply border-line dark:border-seam;
+  }
+}
+
+/* Blog post rich-content pipeline (Phase 1): syntax highlighting, KaTeX,
+   and diff coloring, restrained to the site's ink/parchment/marker tokens
+   rather than a stock highlight.js theme. Scoped under .prose-content so
+   it only ever touches rendered post bodies. */
+:root {
+  --code-accent: #8a6d00;
+  --diff-add: #1f7a4d;
+  --diff-add-bg: #1f7a4d14;
+  --diff-del: #b3352c;
+  --diff-del-bg: #b3352c14;
+}
+html.dark {
+  --code-accent: #f5c518;
+  --diff-add: #4ade9a;
+  --diff-add-bg: #4ade9a1a;
+  --diff-del: #ff8a80;
+  --diff-del-bg: #ff8a801a;
+}
+
+.prose-content .hljs-comment,
+.prose-content .hljs-quote {
+  @apply italic text-ink-faint dark:text-parchment-faint;
+}
+.prose-content .hljs-keyword,
+.prose-content .hljs-selector-tag,
+.prose-content .hljs-tag,
+.prose-content .hljs-name,
+.prose-content .hljs-title.function_ {
+  @apply font-semibold text-ink dark:text-parchment;
+}
+.prose-content .hljs-string,
+.prose-content .hljs-attr,
+.prose-content .hljs-attribute,
+.prose-content .hljs-symbol,
+.prose-content .hljs-bullet,
+.prose-content .hljs-regexp {
+  color: var(--code-accent);
+}
+.prose-content .hljs-number,
+.prose-content .hljs-literal,
+.prose-content .hljs-type,
+.prose-content .hljs-params {
+  @apply text-ink-muted dark:text-parchment-muted;
+}
+.prose-content .hljs-title,
+.prose-content .hljs-title.class_,
+.prose-content .hljs-function {
+  @apply text-ink dark:text-parchment;
+}
+.prose-content .hljs-deletion {
+  color: var(--diff-del);
+  background: var(--diff-del-bg);
+}
+.prose-content .hljs-addition {
+  color: var(--diff-add);
+  background: var(--diff-add-bg);
+}
+.prose-content .hljs-emphasis {
+  @apply italic;
+}
+.prose-content .hljs-strong {
+  @apply font-semibold;
+}
+
+.prose-content .katex {
+  color: inherit;
+  font-size: 1.05em;
+}
+.prose-content .katex-display {
+  @apply my-6 overflow-x-auto overflow-y-hidden;
+}
+
+/* Phase 2: distill layout chrome — sidenotes, width-breakout classes, details */
+
+.prose-content aside {
+  @apply mb-4 mt-3 border-l-2 hairline pl-3 text-[0.85em] italic leading-relaxed text-ink-muted dark:text-parchment-muted;
+}
+@media (min-width: 1024px) {
+  .prose-content.is-distill aside {
+    float: right;
+    clear: right;
+    width: 14rem;
+    margin: 0.15rem -17rem 1rem 1.5rem;
+    border-left: none;
+    padding-left: 0;
+    font-style: normal;
+  }
+}
+
+.prose-content .l-body-outset,
+.prose-content .l-page,
+.prose-content .l-page-outset,
+.prose-content .l-screen,
+.prose-content .l-screen-outset,
+.prose-content .l-screen-inset,
+.prose-content .l-screen-inset-outset {
+  @apply my-6;
+}
+@media (min-width: 1024px) {
+  .prose-content.is-distill .l-body-outset {
+    width: calc(100% + 4rem);
+    margin-left: -2rem;
+    margin-right: -2rem;
+  }
+  .prose-content.is-distill .l-page {
+    width: calc(100% + 8rem);
+    margin-left: -4rem;
+    margin-right: -4rem;
+  }
+  .prose-content.is-distill .l-page-outset {
+    width: calc(100% + 12rem);
+    margin-left: -6rem;
+    margin-right: -6rem;
+  }
+  .prose-content.is-distill .l-screen,
+  .prose-content.is-distill .l-screen-outset,
+  .prose-content.is-distill .l-screen-inset,
+  .prose-content.is-distill .l-screen-inset-outset {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+  }
+  .prose-content.is-distill .l-screen-inset {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+  .prose-content.is-distill .l-screen-inset-outset {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* Floated inline images (img-float-left/right, round 22): the wrapping
+   paragraph must start flush with the image regardless of what precedes
+   it — an empty `clear: both` div ahead of a float collapses its own
+   margins through in a way that eats the following paragraph's top
+   margin, but a plain paragraph ahead of a float doesn't, so relying on
+   ambient margin collapsing here makes the two variants misalign
+   depending on context. Zeroing both sides explicitly keeps them
+   deterministic. !important is needed because .prose-content's
+   `space-y-5 > :not([hidden]) ~ :not([hidden])` sibling selector (three
+   compound selectors) outranks a plain one-class utility like `.mt-0`. */
+.prose-content .img-float,
+.prose-content .img-float + p {
+  margin-top: 0 !important;
+}
+
+.prose-content .clear-both {
+  clear: both;
+}
+
+.prose-content details {
+  @apply my-6 rounded-xl border hairline px-4 py-3;
+}
+.prose-content details summary {
+  @apply cursor-pointer list-none font-mono text-[12px] uppercase tracking-[0.1em] text-ink dark:text-parchment;
+}
+.prose-content details summary::-webkit-details-marker {
+  display: none;
+}
+.prose-content details summary::before {
+  content: '▸';
+  @apply mr-2 inline-block text-marker transition-transform;
+}
+.prose-content details[open] summary::before {
+  transform: rotate(90deg);
+}
+.prose-content details[open] summary {
+  @apply mb-3 border-b hairline pb-3;
+}
+
+.toc-link {
+  @apply block border-l-2 border-transparent py-1 pl-3 text-ink-muted transition-colors hover:border-marker hover:text-ink dark:text-parchment-muted dark:hover:text-parchment;
+}
+
+/* Footnote back/forward jumps land under the fixed nav without this. */
+.prose-content section[data-footnotes] li {
+  scroll-margin-top: 6rem;
+}
+
+/* Phase 4: rich embedded content blocks */
+
+/* Leaflet's own stylesheet gives panes/controls z-indices up to ~1000,
+   which can stack above the site's fixed nav (z-50). The GeoJsonMap
+   wrapper is `isolate`d for this too; this is the defensive backstop. */
+.leaflet-pane,
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 10 !important;
+}
+
+.typogram-block {
+  --global-text-color: #17181a;
+}
+html.dark .typogram-block {
+  --global-text-color: #f1efe8;
+}
+.typogram-block .diagram line,
+.typogram-block .diagram circle,
+.typogram-block .diagram rect,
+.typogram-block polygon,
+.typogram-block line.part {
+  stroke: var(--global-text-color);
+}
+.typogram-block .diagram text,
+.typogram-block .glyph {
+  fill: var(--global-text-color);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
+.typogram-block .reserved {
+  fill: transparent;
+}
+.typogram-block polygon {
+  fill: var(--global-text-color);
+  stroke-width: 0;
+}
+.typogram-block line.part {
+  stroke-width: 6;
+  stroke-linecap: butt;
+}
+
+.diff2html-block .d2h-wrapper {
+  margin: 0;
+}
+.diff2html-block .d2h-file-header {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+.prose-content iframe {
+  @apply my-6 w-full rounded-xl border hairline;
+}
