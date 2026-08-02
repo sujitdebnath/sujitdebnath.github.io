@@ -1,4 +1,0 @@
-User-agent: *
-Disallow:
-
-Sitemap: https://sujitdebnath.github.io/sitemap.xml
