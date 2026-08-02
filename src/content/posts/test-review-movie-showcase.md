@@ -8,7 +8,6 @@ cover: /images/blog/epitaph.png
 featured: false
 preview: Internal test/reference post for round 25's mediaType extension (movie variant) of the review post type. Safe to delete once verified.
 type: review
-status: draft
 mediaType: movie
 subjectTitle: The Quiet Hour
 subjectCreator: Ingrid Solberg
