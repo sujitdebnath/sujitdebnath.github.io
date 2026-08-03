@@ -26,12 +26,20 @@ function toDateString(value) {
 export const blogPosts = Object.entries(modules)
   .map(([path, raw]) => {
     const { data, content } = matter(raw)
+    const slug = slugFromPath(path)
+
+    if (import.meta.env.DEV && !data.category) {
+      console.warn(`[posts] "${slug}" is missing a required "category" field.`)
+    }
+
     return {
-      slug: slugFromPath(path),
+      slug,
       title: data.title,
       subtitle: data.subtitle,
       date: toDateString(data.date),
-      categories: data.categories || [],
+      category: data.category,
+      subcategories: data.subcategories || [],
+      tags: data.tags || [],
       readTime: data.readTime,
       cover: data.cover,
       featured: Boolean(data.featured),

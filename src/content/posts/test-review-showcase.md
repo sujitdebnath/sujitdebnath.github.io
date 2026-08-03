@@ -2,7 +2,8 @@
 title: Round 25 test post — review showcase (book)
 subtitle: Throwaway post exercising the generalized review post type
 date: 2026-08-02
-categories: [Test]
+category: Technology
+tags: [test]
 readTime: 1 min read
 cover: /images/blog/khola-chithi-tonmoy.png
 featured: false

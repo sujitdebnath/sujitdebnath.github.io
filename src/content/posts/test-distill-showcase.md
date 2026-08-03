@@ -2,7 +2,8 @@
 title: Round 11 test post — distill showcase
 subtitle: Throwaway post exercising every rich content type from round 11
 date: 2026-08-01
-categories: [Test]
+category: Technology
+tags: [test]
 readTime: 1 min read
 cover: /images/blog/epitaph.png
 featured: false

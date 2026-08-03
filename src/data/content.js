@@ -9,7 +9,7 @@ export const profile = {
   initials: "SD",
   descriptors: "Learner · Explorer · Volunteer",
   tagline:
-    "Researching how machines learn to see — and writing down what I notice along the way.",
+    "Researching how machines learn to see, and writing down what I notice along the way.",
   location: "Nürnberg, Germany",
   email: "sujit.debnath.bd@gmail.com",
   phone: "+49 157 31158609",
@@ -18,7 +18,7 @@ export const profile = {
   // company names. The OOD project title is the one italicized phrase.
   bio: [
     {
-      text: "I am a graduate student in Artificial Intelligence at Friedrich-Alexander-Universität Erlangen-Nürnberg, where my research focuses on computer vision and the foundations of machine learning. I am currently working on a research project on the “Comparative Analysis of OOD Detection Methods on the Historical-WI Dataset” — which we're preparing for publication — alongside handwriting imitation in the context of generative modeling.",
+      text: "I am a graduate student in Artificial Intelligence at Friedrich-Alexander-Universität Erlangen-Nürnberg, where my research focuses on computer vision and the foundations of machine learning. I have recently conducted a research project on the “Comparative Analysis of OOD Detection Methods on the Historical-WI Dataset” and am currently working on handwriting imitation in the context of generative modeling.",
       links: [
         {
           phrase: "Artificial Intelligence",
@@ -52,7 +52,7 @@ export const profile = {
       ],
     },
     {
-      text: "In my free time, I love to read literature, including fantasies, science fiction, and classics. When I'm not immersed in the digital world, I like to go cycling in the countryside or take peaceful walks along serene roads.",
+      text: "Outside of my professional life, I enjoy volunteering for social welfare causes. In my free time, I love to read literature, including mysteries, fantasies, science fiction, and classics. When I'm not immersed in the digital world, I like to go cycling in the countryside or take peaceful walks along serene roads.",
       links: [],
     },
   ],
@@ -96,7 +96,7 @@ export const experience = [
     end: "Present",
     current: true,
     description:
-      "Maintaining data integrity across mobility partners through quality checks and KPI monitoring, while collaborating with international teams to keep transport data accurate and current.",
+      "Maintaining data integrity across mobility partners through quality checks and KPI monitoring, while collaborating with international teams to keep transport data accurate and up-to-date.",
   },
   {
     title: "Data Analyst",
@@ -107,7 +107,7 @@ export const experience = [
     start: "Jul 2023",
     end: "Sep 2024",
     description:
-      "Enhanced analytics workflows for the Conformity of Production digitization project, building real-time dashboards in Oracle APEX and SQL to support data-driven decisions.",
+      "Enhanced analytics workflows for the Conformity of Production digitization project, building real-time dashboards using Oracle APEX and SQL to support data-driven decisions.",
   },
   {
     title: "Software Engineer - Automation",
@@ -118,7 +118,7 @@ export const experience = [
     start: "Jul 2022",
     end: "Apr 2023",
     description:
-      "Built emergency update automation for Volkswagen EVs and developed Python and Bash tooling for ECU flashing and system-level testing.",
+      "Built emergency update automation for Volkswagen EVs and developed Python and Bash scripts for ECU flashing and system-level testing.",
   },
   {
     title: "Project Coordinator",
@@ -128,7 +128,7 @@ export const experience = [
     start: "Feb 2020",
     end: "Jan 2022",
     description:
-      "Delivered KPI analyses and anomaly detection on telecom performance data, and designed a Python/SQL-based message alert system to speed up cross-team issue response.",
+      "Delivered pre-post KPI analyses and anomaly detection on telecom performance data, and designed a Python/SQL-based message alert system to speed up cross-team issue response.",
   },
   {
     title: "Lab Officer",
@@ -174,7 +174,7 @@ export const education = [
     start: "2015",
     end: "2018",
     details:
-      "Graduated with magna cum laude distinction (90% marks); awarded the NSU Board of Trustee Scholarship for academic excellence.",
+      "Graduated with magna cum laude distinction, and awarded the NSU Board of Trustee Scholarship for academic excellence.",
   },
   {
     degree: "Higher Secondary Certificate",
@@ -212,7 +212,7 @@ export const research = {
       title: "Out-of-Distribution (OOD) Detection on Historical-WI Dataset",
       status: "Ongoing",
       description:
-        "Leading a 5-member research team evaluating OOD detection approaches (ODIN, MSP, ViM, DICE, GradNorm) on the ScriptNet Historical-WI dataset.",
+        "Leading a 5-member research team evaluating OOD detection approaches (e.g., ODIN, MSP, ViM, DICE, GradNorm) on the ScriptNet Historical-WI dataset.",
     },
   ],
   publications: [
@@ -246,7 +246,7 @@ export const projects = [
   {
     title: "Out-of-Distribution (OOD) Detection on Historical-WI Dataset",
     description:
-      "Leading a 5-member research team conducting a comprehensive evaluation of multiple OOD detection approaches (ODIN, MSP, ViM, DICE, GradNorm) using the ScriptNet Historical-WI dataset.",
+      "Leading a 5-member research team conducting a comprehensive evaluation of multiple OOD detection approaches (e.g., ODIN, MSP, ViM, DICE, GradNorm) using the ScriptNet Historical-WI dataset.",
     tags: ["Python", "PyTorch", "Scikit-learn", "Bash"],
     href: "https://github.com/sujitdebnath/fau-projcv-ood-detection-wi",
   },
@@ -322,7 +322,7 @@ export const coffeeChat = {
   topicsLabel: "A casual conversation about:",
   topics: [
     "Career planning and professional growth",
-    "Graduate school applications and experiences",
+    "Graduate school applications and planning",
     "CV, portfolio, and career feedback",
     "Research discussions and collaboration ideas",
     "Software, AI, and project opportunities",

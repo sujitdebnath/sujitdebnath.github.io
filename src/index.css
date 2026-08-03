@@ -224,6 +224,25 @@ html.dark {
   clear: both;
 }
 
+/* Embedded letter block (round 34): a full letter/document quoted inside
+   a post body, set apart as its own card rather than blending into
+   ordinary paragraphs. Direct <p> children aren't covered by
+   .prose-content's own space-y-5 (that only reaches its direct
+   children, not grandchildren inside this div), so paragraph rhythm
+   inside the card is set explicitly here. */
+.prose-content .letter {
+  @apply my-8 rounded-2xl border hairline bg-paper-surface p-6 font-serifText not-italic leading-relaxed dark:bg-night-surface sm:p-8;
+}
+.prose-content .letter > p + p {
+  @apply mt-5;
+}
+.prose-content .letter > p:first-child {
+  @apply mb-6;
+}
+.prose-content .letter > p:last-child {
+  @apply mt-6 text-right;
+}
+
 .prose-content details {
   @apply my-6 rounded-xl border hairline px-4 py-3;
 }

@@ -2,7 +2,8 @@
 title: Round 11 test post — travel showcase
 subtitle: Throwaway post exercising the travel post type's photo gallery
 date: 2026-08-01
-categories: [Test]
+category: Technology
+tags: [test]
 readTime: 1 min read
 cover: /images/blog/cheleta.png
 featured: false

@@ -2,7 +2,8 @@
 title: The Quiet Hour is a small film that earns its silences
 subtitle: A review of a fictional film — round 25's mediaType extension to the review post type
 date: 2026-08-02
-categories: [Test]
+category: Technology
+tags: [test]
 readTime: 3 min read
 cover: /images/blog/epitaph.png
 featured: false

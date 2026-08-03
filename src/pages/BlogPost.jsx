@@ -12,6 +12,8 @@ import TikZLoader from '../components/blog/TikZLoader.jsx'
 import PostGallery from '../components/blog/PostGallery.jsx'
 import ReviewMeta from '../components/blog/ReviewMeta.jsx'
 import DraftBadge from '../components/blog/DraftBadge.jsx'
+import FeaturedBadge from '../components/blog/FeaturedBadge.jsx'
+import { CategoryTags } from '../components/BlogCard.jsx'
 import CitationMarker from '../components/blog/CitationMarker.jsx'
 import References from '../components/blog/References.jsx'
 import ReadingProgress from '../components/blog/ReadingProgress.jsx'
@@ -230,18 +232,12 @@ export default function BlogPost() {
             </p>
             {post.status === 'draft' && <DraftBadge />}
           </div>
-          {post.categories?.length > 0 && (
-            <ul className="mt-3 flex flex-wrap gap-1.5">
-              {post.categories.map((c) => (
-                <li
-                  key={c}
-                  className="rounded-full border hairline px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.08em] text-ink-muted dark:text-parchment-muted"
-                >
-                  {c}
-                </li>
-              ))}
-            </ul>
-          )}
+          <CategoryTags
+            category={post.category}
+            subcategories={post.subcategories}
+            tags={post.tags}
+            className="mt-3"
+          />
           <h1 className="mt-3 font-display text-4xl leading-tight text-ink dark:text-parchment sm:text-5xl">
             {post.title}
           </h1>
@@ -255,7 +251,10 @@ export default function BlogPost() {
 
       <div className="mx-auto max-w-prose">
         {post.cover && (
-          <Reveal delay={0.06} className="mt-10">
+          <Reveal delay={0.06} className="relative mt-10">
+            {post.featured && (
+              <FeaturedBadge size="md" className="absolute left-3 top-3 z-10" />
+            )}
             <img
               src={post.cover}
               alt=""

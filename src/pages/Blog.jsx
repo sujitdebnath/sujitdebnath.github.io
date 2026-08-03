@@ -1,10 +1,13 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowUpRight, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react'
 import Reveal from '../components/Reveal.jsx'
 import BlogCard, { CategoryTags, formatDate } from '../components/BlogCard.jsx'
 import DraftBadge from '../components/blog/DraftBadge.jsx'
+import FeaturedBadge from '../components/blog/FeaturedBadge.jsx'
+import Dropdown from '../components/blog/Dropdown.jsx'
 import { blogPosts } from '../data/posts.js'
+import { categories as taxonomyCategories } from '../data/taxonomy.js'
 
 const POSTS_PER_PAGE = 6
 
@@ -47,9 +50,11 @@ export default function Blog() {
 
   const featuredPosts = useMemo(() => posts.filter((post) => post.featured), [posts])
 
-  const categories = useMemo(() => {
+  const mainCategories = useMemo(() => ['All', ...Object.keys(taxonomyCategories)], [])
+
+  const tagOptions = useMemo(() => {
     const set = new Set()
-    posts.forEach((post) => post.categories?.forEach((c) => set.add(c)))
+    posts.forEach((post) => post.tags?.forEach((t) => set.add(t)))
     return ['All', ...Array.from(set).sort()]
   }, [posts])
 
@@ -59,13 +64,24 @@ export default function Blog() {
   }, [posts])
 
   const [category, setCategory] = useState('All')
+  const [subcategory, setSubcategory] = useState('All')
+  const [tag, setTag] = useState('All')
   const [year, setYear] = useState('All')
   const [page, setPage] = useState(1)
 
+  const subcategoryOptions = useMemo(() => {
+    if (category === 'All') return ['All']
+    return ['All', ...(taxonomyCategories[category] || [])]
+  }, [category])
+
+  const filtersActive = category !== 'All' || subcategory !== 'All' || tag !== 'All' || year !== 'All'
+
   const filtered = posts.filter((post) => {
-    const categoryMatch = category === 'All' || post.categories?.includes(category)
+    const categoryMatch = category === 'All' || post.category === category
+    const subcategoryMatch = subcategory === 'All' || post.subcategories?.includes(subcategory)
+    const tagMatch = tag === 'All' || post.tags?.includes(tag)
     const yearMatch = year === 'All' || new Date(post.date).getFullYear() === year
-    return categoryMatch && yearMatch
+    return categoryMatch && subcategoryMatch && tagMatch && yearMatch
   })
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / POSTS_PER_PAGE))
@@ -78,11 +94,30 @@ export default function Blog() {
 
   function selectCategory(next) {
     setCategory(next)
+    setSubcategory('All')
+    setPage(1)
+  }
+
+  function selectSubcategory(next) {
+    setSubcategory(next)
+    setPage(1)
+  }
+
+  function selectTag(next) {
+    setTag(next)
     setPage(1)
   }
 
   function selectYear(next) {
     setYear(next === 'All' ? 'All' : Number(next))
+    setPage(1)
+  }
+
+  function clearFilters() {
+    setCategory('All')
+    setSubcategory('All')
+    setTag('All')
+    setYear('All')
     setPage(1)
   }
 
@@ -121,10 +156,20 @@ export default function Blog() {
 
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_260px] lg:items-start">
             <aside className="lg:col-start-2 lg:row-start-1">
+              {filtersActive && (
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                  className="mark-line mb-6 font-mono text-[11px] uppercase tracking-[0.1em] text-ink-muted hover:text-marker dark:text-parchment-muted"
+                >
+                  Clear filters
+                </button>
+              )}
+
               <div>
-                <FilterLabel>Category</FilterLabel>
+                <FilterLabel>Main Category</FilterLabel>
                 <div className="flex flex-col gap-2">
-                  {categories.map((cat) => (
+                  {mainCategories.map((cat) => (
                     <button
                       key={cat}
                       type="button"
@@ -142,29 +187,28 @@ export default function Blog() {
               </div>
 
               <div className="mt-8">
+                <FilterLabel>Subcategory</FilterLabel>
+                <Dropdown
+                  value={subcategory}
+                  options={subcategoryOptions}
+                  onChange={selectSubcategory}
+                  disabled={category === 'All'}
+                />
+              </div>
+
+              <div className="mt-8">
+                <FilterLabel>Tags</FilterLabel>
+                <Dropdown
+                  value={tag}
+                  options={tagOptions}
+                  onChange={selectTag}
+                  uppercase={false}
+                />
+              </div>
+
+              <div className="mt-8">
                 <FilterLabel>Year</FilterLabel>
-                <div className="relative">
-                  <select
-                    value={year}
-                    onChange={(e) => selectYear(e.target.value)}
-                    className="w-full appearance-none rounded-lg border hairline bg-transparent px-3 py-2 pr-8 font-mono text-[12px] uppercase tracking-[0.08em] text-ink transition-colors hover:border-marker focus:border-marker focus:outline-none dark:text-parchment"
-                  >
-                    {years.map((yr) => (
-                      <option
-                        key={yr}
-                        value={yr}
-                        className="bg-paper-surface text-ink dark:bg-night-surface dark:text-parchment"
-                      >
-                        {yr}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown
-                    size={14}
-                    strokeWidth={1.75}
-                    className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-ink-faint dark:text-parchment-faint"
-                  />
-                </div>
+                <Dropdown value={year} options={years} onChange={selectYear} />
               </div>
             </aside>
 
@@ -182,7 +226,10 @@ export default function Blog() {
                         className="group flex flex-col gap-6 py-10 sm:flex-row sm:items-start"
                       >
                         {post.cover && (
-                          <div className="aspect-[4/3] w-full shrink-0 overflow-hidden rounded-2xl border hairline sm:w-48 md:w-56 lg:w-64">
+                          <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden rounded-2xl border hairline sm:w-48 md:w-56 lg:w-64">
+                            {post.featured && (
+                              <FeaturedBadge className="absolute left-2 top-2 z-10" />
+                            )}
                             <img
                               src={post.cover}
                               alt=""
@@ -197,7 +244,12 @@ export default function Blog() {
                             </p>
                             {post.status === 'draft' && <DraftBadge />}
                           </div>
-                          <CategoryTags categories={post.categories} className="mt-3" />
+                          <CategoryTags
+                            category={post.category}
+                            subcategories={post.subcategories}
+                            tags={post.tags}
+                            className="mt-3"
+                          />
                           <h2 className="mark-line mt-3 font-display text-2xl text-ink dark:text-parchment">
                             {post.title}
                           </h2>

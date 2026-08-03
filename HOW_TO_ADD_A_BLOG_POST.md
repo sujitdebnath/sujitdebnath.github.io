@@ -21,7 +21,9 @@ Paste this at the very top of the file and fill in each field:
 title: Your post's title
 subtitle: A short one-line subtitle or tagline
 date: 2026-01-01
-categories: [Life, Story]
+category: Life
+subcategories: [Memories, Relationships]
+tags: [friendship, nostalgia]
 readTime: 5 min read
 cover: /images/blog/my-new-post.jpg
 featured: false
@@ -31,10 +33,27 @@ preview: A one-to-two sentence teaser shown in the post list and cards.
 
 - **date** — `YYYY-MM-DD`. Posts are sorted newest-first automatically,
   nothing else to configure.
-- **categories** — a list. Reuse existing category names (`Life`, `Story`,
-  etc.) to keep the filter buttons on the blog page from sprawling, but a
-  new category name works automatically too — it just shows up as a new
-  filter option.
+- **category** — exactly one, required. Must be one of the top-level
+  categories defined in `src/data/taxonomy.js` (`Life`, `Writing`,
+  `Reviews`, `Technology`, `Lifestyle`). Missing it prints a console
+  warning in dev.
+- **subcategories** — a list of 0–3, optional. Should be drawn from that
+  `category`'s subcategory list in `src/data/taxonomy.js` (e.g. `Life`
+  → `Memories`, `Experiences`, `Relationships`, `Mental Health`,
+  `Personal Growth`) — this isn't enforced in code, just a convention
+  worth following so the Blog page's cascading Subcategory filter stays
+  meaningful.
+- **tags** — a list, optional, free-form. Write them lowercase-hyphenated
+  (e.g. `mental-health`, not `Mental Health`) — that's the exact string
+  shown, `#`-prefixed, on cards, the post header, and in the Tags filter
+  dropdown, so the stored format is the display format. The Blog page's
+  Tags filter only ever offers tags that are actually used on a
+  published post, so a new tag just works — no other file needs
+  updating.
+- **`src/data/taxonomy.js`** is the single source of truth for the whole
+  category/subcategory/tag system — add, rename, or remove a category,
+  subcategory, or tag there and every filter/component picks it up
+  automatically. No other file should need touching for that.
 - **featured** — set to `true` to show this post in the Featured section on
   the blog page and in the home page's Latest Entries section (which shows
   the 3 most recent posts regardless of this flag). `false` (or omitted)
@@ -127,6 +146,35 @@ clear on its own (e.g. at the next heading), drop in:
 ```md
 <div class="clear-both"></div>
 ```
+
+### Embedding a letter/document
+
+For quoting or reproducing a full letter/document within a post, wrap it
+in `<div class="letter">...</div>` — same raw-HTML-with-a-blank-line
+pattern as `<aside>` and the layout classes above, with the letter's text
+inside as normal Markdown paragraphs:
+
+```md
+<div class="letter">
+
+Dear Alex,
+
+The rest of the letter, as normal paragraphs...
+
+Sincerely,\
+Your name
+
+</div>
+```
+
+Renders as a self-contained card (subtle background tint, border,
+generous padding), in the site's serif reading font at normal weight
+(not italic — fine for a short quote elsewhere, but hurts readability
+over a full letter). The **first paragraph** (the salutation) gets extra
+space below it, and the **last paragraph** (the sign-off/signature) is
+right-aligned with extra space above it. No other setup needed — just
+make sure the salutation is the first paragraph inside the `<div>` and
+the sign-off is the last.
 
 ## 5. Post types
 
