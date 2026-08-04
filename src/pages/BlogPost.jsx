@@ -1,15 +1,17 @@
 import { useMemo, useRef } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, MapPin } from 'lucide-react'
 import Reveal from '../components/Reveal.jsx'
 import { blogPosts } from '../data/posts.js'
 import { remarkPlugins, rehypePlugins } from '../lib/markdownPipeline.js'
 import { extractHeadings, remarkHeadingIds } from '../lib/postHeadings.js'
+import { extractLocations, rehypeLocationIds } from '../lib/postLocations.js'
 import { CodePre, CodeInline } from '../components/blog/CodeBlock.jsx'
 import { TocDesktopNav, TocMobileDetails } from '../components/blog/TableOfContents.jsx'
 import TikZLoader from '../components/blog/TikZLoader.jsx'
 import PostGallery from '../components/blog/PostGallery.jsx'
+import PhotoGroup from '../components/blog/PhotoGroup.jsx'
 import ReviewMeta from '../components/blog/ReviewMeta.jsx'
 import DraftBadge from '../components/blog/DraftBadge.jsx'
 import FeaturedBadge from '../components/blog/FeaturedBadge.jsx'
@@ -38,6 +40,46 @@ const DEFAULT_IMG_VARIANT = {
   caption: true,
 }
 
+// Reads the raw hast children of a `.photo-group` div directly (rather
+// than letting react-markdown recurse into the normal `img` component),
+// since size classes mean something different inside a group than they
+// do standalone — see IMG_VARIANTS vs this mapping.
+const GROUP_SIZE_BY_CLASS = {
+  'img-large': 'large',
+  'img-tall': 'tall',
+  'img-wide': 'wide',
+}
+function extractGroupPhotos(node) {
+  return (node?.children || [])
+    .filter((child) => child.tagName === 'img')
+    .map((child) => {
+      const props = child.properties || {}
+      const classes = Array.isArray(props.className) ? props.className : []
+      const sizeClass = classes.find((c) => GROUP_SIZE_BY_CLASS[c])
+      return {
+        src: props.src,
+        caption: props.alt || '',
+        size: GROUP_SIZE_BY_CLASS[sizeClass] || 'normal',
+      }
+    })
+}
+
+function LocationNav({ locations }) {
+  return (
+    <nav aria-label="Trip stops" className="location-nav flex flex-wrap gap-2">
+      {locations.map((location) => (
+        <a
+          key={location.slug}
+          href={`#${location.slug}`}
+          className="rounded-full border hairline px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.1em] text-ink-muted transition-colors hover:border-marker dark:text-parchment-muted"
+        >
+          {location.text}
+        </a>
+      ))}
+    </nav>
+  )
+}
+
 const IMG_VARIANTS = {
   'img-large': {
     figure: 'my-8 lg:-ml-[7rem] lg:-mr-[7rem] lg:w-[calc(100%+14rem)]',
@@ -62,12 +104,51 @@ const IMG_VARIANTS = {
   },
 }
 
-function useMarkdownComponents(headings, bibliography, isReview) {
+function useMarkdownComponents(headings, bibliography, isReview, locations) {
   return useMemo(() => {
     return {
       hr: SceneBreak,
       pre: CodePre,
       code: CodeInline,
+      div: ({ node, className, children, ...props }) => {
+        if (className === 'photo-group') {
+          return <PhotoGroup photos={extractGroupPhotos(node)} />
+        }
+        if (className === 'location') {
+          const isFirst = locations[0]?.slug === props.id
+          return (
+            <>
+              {isFirst && locations.length >= 2 && <LocationNav locations={locations} />}
+              <div {...props} className="location-marker flex scroll-mt-24 items-center gap-2">
+                <MapPin size={20} strokeWidth={1.75} className="shrink-0 text-marker" />
+                <span className="font-display text-xl text-ink dark:text-parchment sm:text-2xl">
+                  {children}
+                </span>
+              </div>
+            </>
+          )
+        }
+        if (className === 'review-item') {
+          return (
+            <div className="review-item-block">
+              <ReviewMeta
+                subjectTitle={props['data-title']}
+                subjectCreator={props['data-creator']}
+                subjectYear={props['data-year']}
+                rating={props['data-rating'] != null ? parseFloat(props['data-rating']) : null}
+                coverSrc={props['data-cover']}
+                compact
+              />
+              <div className="mt-4 space-y-5">{children}</div>
+            </div>
+          )
+        }
+        return (
+          <div {...props} className={className}>
+            {children}
+          </div>
+        )
+      },
       a: ({ href, children, node, ...props }) => {
         const isInPage = href?.startsWith('#')
         return (
@@ -164,7 +245,7 @@ function useMarkdownComponents(headings, bibliography, isReview) {
         <CitationMarker id={id} number={number} entry={bibliography.get(id)} />
       ),
     }
-  }, [headings, bibliography, isReview])
+  }, [headings, bibliography, isReview, locations])
 }
 
 function formatDate(iso) {
@@ -181,6 +262,7 @@ export default function BlogPost() {
   const articleRef = useRef(null)
 
   const headings = useMemo(() => extractHeadings(post?.body || ''), [post?.body])
+  const locations = useMemo(() => extractLocations(post?.body || ''), [post?.body])
   const isDistill = post?.type === 'distill'
   const isReview = post?.type === 'review'
   const bibliography = useMemo(
@@ -191,12 +273,16 @@ export default function BlogPost() {
     () => (isDistill ? extractCitationOrder(post?.body || '') : new Map()),
     [isDistill, post?.body],
   )
-  const markdownComponents = useMarkdownComponents(headings, bibliography, isReview)
+  const markdownComponents = useMarkdownComponents(headings, bibliography, isReview, locations)
   const hasTikz = useMemo(() => /type=["']text\/tikz["']/.test(post?.body || ''), [post?.body])
   const remarkPluginsForPost = useMemo(() => {
     const withHeadingIds = [...remarkPlugins, [remarkHeadingIds, headings]]
     return isDistill ? [...withHeadingIds, [remarkCitations, citationOrder]] : withHeadingIds
   }, [isDistill, headings, citationOrder])
+  const rehypePluginsForPost = useMemo(
+    () => (locations.length ? [...rehypePlugins, [rehypeLocationIds, locations]] : rehypePlugins),
+    [locations],
+  )
 
   if (!post) {
     return (
@@ -295,7 +381,7 @@ export default function BlogPost() {
             >
               <ReactMarkdown
                 remarkPlugins={remarkPluginsForPost}
-                rehypePlugins={rehypePlugins}
+                rehypePlugins={rehypePluginsForPost}
                 components={markdownComponents}
               >
                 {post.body}
@@ -309,7 +395,7 @@ export default function BlogPost() {
           <Reveal delay={0.1} className="prose-content mt-10 space-y-5 text-[1.05rem] leading-relaxed text-ink-muted dark:text-parchment-muted">
             <ReactMarkdown
               remarkPlugins={remarkPluginsForPost}
-              rehypePlugins={rehypePlugins}
+              rehypePlugins={rehypePluginsForPost}
               components={markdownComponents}
             >
               {post.body}

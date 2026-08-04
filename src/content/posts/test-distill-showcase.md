@@ -113,6 +113,16 @@ Default width, plain `<img>` tag with no class — should render identically, ca
 
 <img src="/images/blog/cheleta.png" alt="A smaller inline photo, via a plain img tag" />
 
+Round 39 — a `photo-group` block, in a non-travel/non-review post body,
+mixing an `img-large` tile with two `img-tall` tiles (3 photos total, so
+should lay out 2-columns-then-3 responsively, not the full 4):
+
+<div class="photo-group">
+<img src="/images/blog/eiffel-tower-1.jpg" alt="Distill photo-group 1 — large tile" class="img-large" />
+<img src="/images/blog/eiffel-tower-2.jpg" alt="Distill photo-group 2 — tall tile" class="img-tall" />
+<img src="/images/blog/khola-chithi-tonmoy.png" alt="Distill photo-group 3 — tall tile" class="img-tall" />
+</div>
+
 ## Code Blocks
 
 ```python

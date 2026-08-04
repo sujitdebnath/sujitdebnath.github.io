@@ -147,6 +147,37 @@ clear on its own (e.g. at the next heading), drop in:
 <div class="clear-both"></div>
 ```
 
+### Grouping several photos together inline
+
+To show a handful of photos together as a small grid — anywhere in any
+post's body, not just `type: travel` — wrap plain `<img>` tags (same
+syntax as above) in `<div class="photo-group">...</div>`:
+
+```md
+<div class="photo-group">
+<img src="/images/blog/photo1.jpg" alt="First photo" class="img-tall" />
+<img src="/images/blog/photo2.jpg" alt="Second photo" class="img-tall" />
+<img src="/images/blog/photo3.jpg" alt="Third photo" class="img-tall" />
+</div>
+```
+
+Renders as a compact grid (4 columns, same as the `travel` gallery above
+and using the same fixed-row-height/backfill technique) — a group with
+fewer than 4 photos just leaves some cells empty on its last row rather
+than shrinking the column count, since column count needs to match what
+the tiles' sizes require, not the raw photo count (a `large`/`wide` tile
+alone already needs 2 columns). Clicking a photo opens a lightbox scoped
+to just that group — it won't pull in photos from elsewhere in the post.
+
+**Inside a `photo-group`, the size classes mean something different than
+they do standalone**: `img-tall` = a tall grid tile (not the standalone
+3:4-crop-at-column-width look), `img-large` = a big 2×2 tile, `img-wide`
+= a wide 2×1 tile, no class = a plain 1×1 tile — the same tall/large/wide
+vocabulary as the `travel` gallery's `size:` field, just spelled as
+classes here since this is inline HTML rather than frontmatter. `img-full`
+and the floated variants aren't meaningful in a grid tile and aren't
+supported here — keep those for standalone images.
+
 ### Embedding a letter/document
 
 For quoting or reproducing a full letter/document within a post, wrap it
@@ -247,10 +278,37 @@ in the grid:
 - `tall` — spans one column and two rows, twice as tall as it is wide.
   Good for portrait-orientation photos: tall buildings, towers, standing
   portraits.
+- `wide` — spans two columns and one row, twice as wide as it is tall.
+  Good for landscape-orientation photos: skylines, panoramas, group shots.
 
-Mix and match freely — the grid backfills gaps around `large`/`tall`
+Mix and match freely — the grid backfills gaps around `large`/`tall`/`wide`
 tiles automatically, so there's no need to reorder photos to avoid empty
 cells.
+
+#### Multi-location posts (multiple stops in one trip)
+
+If a `travel` post covers more than one place, mark each stop with:
+
+```md
+<div class="location">Nürnberg, Germany</div>
+```
+
+Everything that follows (text, photos, a photo group — see below) belongs
+to that stop until the next `<div class="location">` starts the next one.
+It renders as a small waypoint heading (a map-pin icon + the name), with
+generous space above it so it clearly reads as a new section starting.
+A location section can be text-only — photos under it are entirely
+optional.
+
+If a post has **2 or more** location markers, a row of small jump-to
+links automatically appears near the top of the post (right after the
+intro, before the first stop) so readers can skip straight to one. A
+single-location post doesn't get this nav — nothing to jump between.
+
+The frontmatter `gallery:` field is completely separate from this and
+still works exactly as documented above — one combined gallery for the
+whole trip. Whether you use `gallery:`, per-location photo groups (below),
+both, or neither is entirely up to how you want to structure that post.
 
 ### `type: review`
 
@@ -290,6 +348,38 @@ don't need a new post type — just add a case for it in `creatorLabel()`
 in `src/components/blog/ReviewMeta.jsx` if it needs its own label wording
 ("Composed by...", "Developed by...", etc.); otherwise it'll fall back to
 the plain label automatically.
+
+#### Multi-subject reviews (e.g. a trilogy)
+
+For a review covering more than one book/movie/etc. in a single post,
+mark up each one as a `review-item` block with its metadata as `data-`
+attributes, and the review text as normal Markdown inside it:
+
+```md
+<div class="review-item" data-title="Batman Begins" data-creator="Christopher Nolan" data-year="2005" data-rating="4.5" data-cover="/images/blog/batman-begins.jpg">
+
+Review text for this specific film, written as normal Markdown —
+paragraphs, blockquotes for memorable dialogue, etc.
+
+</div>
+```
+
+(Same blank-line-after-the-opening-tag pattern as the letter block
+above.) Each one renders with a compact header — small cover thumbnail,
+title, creator, star rating — followed by its own review text. `data-cover`
+is optional; the rest of the fields work the same as the single-subject
+frontmatter fields described above (`data-year` and `data-rating` are
+both optional too).
+
+Separate consecutive `review-item` blocks with a plain `---` or `***` —
+no special syntax needed, it's just the ordinary scene-break divider.
+
+For a multi-item post, the top-level frontmatter fields
+(`subjectTitle`/`subjectCreator`/`rating`/etc.) become optional — use
+them for an overall verdict on the collection as a whole (e.g.
+`subjectTitle: Nolan's Batman Trilogy` with a combined `rating`), or
+leave them out entirely and let the post open straight into the first
+`review-item`.
 
 ## 6. Rich content blocks (any post type)
 

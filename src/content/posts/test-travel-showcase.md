@@ -21,13 +21,16 @@ gallery:
   - src: /images/blog/epitaph.png
     caption: Fifth tile, to check arrow-key/on-screen prev-next wraparound.
   - src: /images/blog/khola-chithi-tonmoy.png
-    caption: Sixth tile — a second large tile to check gap-filling around it.
-    size: large
+    caption: Round 39 — a wide tile, two columns by one row.
+    size: wide
   - src: /images/blog/epitaph.png
     caption: Fifth tile, to check arrow-key/on-screen prev-next wraparound.
   - src: /images/blog/eiffel-tower-2.jpg
     size: tall
   - src: /images/blog/cheleta.png
+  - src: /images/blog/eiffel-tower-1.jpg
+    caption: Round 39 — a wide tile, two columns by one row.
+    size: wide
 ---
 
 This is a throwaway test post for the `travel` post type added in round 11. The
@@ -87,3 +90,112 @@ the image's bottom edge is reached.
 <div class="clear-both"></div>
 
 Back to regular text after the inline image.
+
+## Round 39 — multi-location trip
+
+Everything below tests the new multi-location structure: a jump nav should
+appear right above the first `Nürnberg` heading (there are 3 stops, well
+above the 2-marker minimum), each stop has its own photo group underneath
+it, and clicking any photo in a group should only cycle through that
+group's own photos.
+
+<div class="location">Nürnberg, Germany</div>
+
+First stop. This location section has a photo group with three `img-tall`
+photos, and should have a large top margin above its heading to clearly
+separate it from the floated-image content above.
+
+<div class="photo-group">
+<img src="/images/blog/eiffel-tower-1.jpg" alt="Nürnberg photo 1" class="img-tall" />
+<img src="/images/blog/eiffel-tower-2.jpg" alt="Nürnberg photo 2" class="img-tall" />
+<img src="/images/blog/cheleta.png" alt="Nürnberg photo 3" class="img-tall" />
+<img src="/images/blog/cheleta.png" alt="Nürnberg photo 4" class="img-tall" />
+</div>
+
+<div class="location">Paris, France</div>
+
+Second stop, mixing tile sizes in one group: a `img-large` tile plus a
+`img-wide` tile plus a plain tile, to check they all backfill correctly
+together.
+
+<div class="photo-group">
+<img src="/images/blog/epitaph.png" alt="Paris photo 1 — large tile" class="img-large" />
+<img src="/images/blog/khola-chithi-tonmoy.png" alt="Paris photo 2 — wide tile" class="img-wide" />
+<img src="/images/blog/eiffel-tower-1.jpg" alt="Paris photo 3 — plain tile" />
+<img src="/images/blog/eiffel-tower-1.jpg" alt="Paris photo 4 — plain tile" />
+</div>
+
+<div class="location">Berlin, Germany</div>
+
+Third stop — text only, no photos, to check that a location section
+doesn't require a photo group.
+
+## Round 39 — standalone photo group (non-travel context)
+
+This section checks that `photo-group` also works outside a location
+section, as plain inline content in the middle of the post body:
+
+<div class="photo-group">
+<img src="/images/blog/cheleta.png" alt="Standalone group photo 1" class="img-tall" />
+<img src="/images/blog/epitaph.png" alt="Standalone group photo 2" class="img-tall" />
+<img src="/images/blog/khola-chithi-tonmoy.png" alt="Paris photo 2 — wide tile" class="img-wide" />
+<img src="/images/blog/khola-chithi-tonmoy.png" alt="Paris photo 3 — wide tile" class="img-wide" />
+</div>
+
+Back to regular text after the standalone photo group — only 2 photos in
+that group, laid out on a fixed 4-column grid same as every other group
+(round 40 fix: column count is no longer reduced based on photo count,
+so this just leaves 2 cells empty on the row instead of shrinking to 2
+columns).
+
+<div class="location">Lyon, France</div>
+
+Six-image group — mixed sizes, already correct before the round 40 fix
+since it always had 4+ images (only smaller groups were reducing their
+column count).
+
+<div class="photo-group">
+<img src="/images/blog/epitaph.png" alt="Lyon photo 1 — large tile" class="img-large" />
+<img src="/images/blog/khola-chithi-tonmoy.png" alt="Lyon photo 2 — tall tile" class="img-tall" />
+<img src="/images/blog/khola-chithi-tonmoy.png" alt="Lyon photo 3 — tall tile" class="img-tall" />
+<img src="/images/blog/khola-chithi-tonmoy.png" alt="Lyon photo 4 — plain tile" />
+<img src="/images/blog/khola-chithi-tonmoy.png" alt="Lyon photo 5 — plain tile" />
+<img src="/images/blog/khola-chithi-tonmoy.png" alt="Lyon photo 6 — wide tile" class="img-wide" />
+</div>
+
+## Round 40 — photo-group column count bug
+
+Three more group sizes to confirm the fixed-4-column fix packs
+correctly at every count, not just 2 and 6.
+
+Three images, `large` + `tall` + `tall` — this was the exact bug repro:
+with the old count-based 3-column grid, the `large` tile filled 2 of the
+3 columns on row 1, leaving only 1 free column, so the two `tall` tiles
+couldn't sit side by side and the second one dropped to its own row.
+With a fixed 4 columns, both `tall` tiles should now sit next to each
+other on row 1, to the right of the `large` tile.
+
+<div class="photo-group">
+<img src="/images/blog/eiffel-tower-1.jpg" alt="Round 40 photo 1 — large tile" class="img-large" />
+<img src="/images/blog/eiffel-tower-2.jpg" alt="Round 40 photo 2 — tall tile" class="img-tall" />
+<img src="/images/blog/cheleta.png" alt="Round 40 photo 3 — tall tile" class="img-tall" />
+</div>
+
+Four images, all plain tiles:
+
+<div class="photo-group">
+<img src="/images/blog/epitaph.png" alt="Round 40 five-image group, photo 1" />
+<img src="/images/blog/khola-chithi-tonmoy.png" alt="Round 40 five-image group, photo 2" />
+<img src="/images/blog/eiffel-tower-1.jpg" alt="Round 40 five-image group, photo 3" />
+<img src="/images/blog/eiffel-tower-2.jpg" alt="Round 40 five-image group, photo 4" />
+</div>
+
+Another combo:
+
+<div class="photo-group">
+<img src="/images/blog/eiffel-tower-1.jpg" alt="Round 40 photo 1 — large tile" />
+<img src="/images/blog/eiffel-tower-1.jpg" alt="Round 40 photo 1 — large tile" />
+<img src="/images/blog/eiffel-tower-2.jpg" alt="Round 40 photo 2 — tall tile" class="img-tall" />
+<img src="/images/blog/cheleta.png" alt="Round 40 photo 3 — tall tile" class="img-tall" />
+<img src="/images/blog/khola-chithi-tonmoy.png" alt="Round 40 photo 3 — tall tile" class="img-wide" />
+</div>

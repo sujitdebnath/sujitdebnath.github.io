@@ -323,3 +323,28 @@ html.dark .typogram-block {
 .prose-content iframe {
   @apply my-6 w-full rounded-xl border hairline;
 }
+
+/* Round 39: inline photo groups, multi-location travel posts, and
+   multi-item reviews all render as direct children of .prose-content,
+   so — same gotcha as .img-float and .letter above — their own
+   margin-top would otherwise be clamped to the ambient 1.25rem
+   .space-y-5 sibling rhythm instead of the value each block actually
+   wants. Scoped !important rules keep them deterministic regardless of
+   what precedes them or how deep they're nested (e.g. a photo group
+   inside a review-item's body). */
+.prose-content .photo-group-block {
+  margin-top: 2rem !important;
+}
+.prose-content .location-nav {
+  margin-top: 2rem !important;
+  margin-bottom: 2rem;
+}
+.prose-content .location-marker {
+  margin-top: 3.5rem !important;
+}
+.prose-content .location-marker:first-child {
+  margin-top: 0 !important;
+}
+.prose-content .review-item-block {
+  margin-top: 2rem !important;
+}

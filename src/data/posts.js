@@ -49,7 +49,7 @@ export const blogPosts = Object.entries(modules)
       gallery: (data.gallery || []).map((photo) => ({
         src: photo.src,
         caption: photo.caption,
-        size: ['large', 'tall'].includes(photo.size) ? photo.size : 'normal',
+        size: ['large', 'tall', 'wide'].includes(photo.size) ? photo.size : 'normal',
       })),
       mediaType: data.mediaType,
       subjectTitle: data.subjectTitle,
