@@ -9,7 +9,7 @@ subcategories: [Memories, Relationships]
 tags: [friendship, love, nostalgia]
 readTime: 5 min read
 cover: /images/blog/khola-chithi-tonmoy.png
-featured: true
+featured: false
 preview: >-
   লকডাউনের এক বিষণ্ণ দুপুরে ছোটবেলার বন্ধু তন্ময়কে লেখা একটি চিঠি, বছরের পর বছর
   চাপা পড়ে থাকার পর অবশেষে খোলা চিঠি রূপে প্রকাশ পেল।
