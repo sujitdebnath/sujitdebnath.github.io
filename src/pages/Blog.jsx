@@ -153,6 +153,9 @@ export default function Blog() {
           <p className="mb-6 font-mono text-[10px] uppercase tracking-[0.16em] text-ink-faint dark:text-parchment-faint">
             All Entries
           </p>
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_260px] lg:gap-10">
+            <div className="border-t hairline" />
+          </div>
 
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_260px] lg:items-start">
             <aside className="lg:col-start-2 lg:row-start-1">
@@ -214,11 +217,11 @@ export default function Blog() {
 
             <div className="lg:col-start-1 lg:row-start-1">
               {paginatedPosts.length === 0 ? (
-                <p className="text-sm text-ink-muted dark:text-parchment-muted">
+                <p className="mt-10 text-sm text-ink-muted dark:text-parchment-muted">
                   No posts match these filters yet.
                 </p>
               ) : (
-                <ol className="divide-y hairline border-t hairline">
+                <ol className="divide-y hairline">
                   {paginatedPosts.map((post, i) => (
                     <Reveal as="li" key={post.slug} delay={i * 0.05}>
                       <Link
