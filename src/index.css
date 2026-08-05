@@ -243,6 +243,18 @@ html.dark {
   @apply mt-6 text-right;
 }
 
+/* Poem block (round 41): a poem quoted inline, set apart from prose
+   without the .letter block's card treatment — plain, left-aligned
+   type in a narrower reading column. Direct <p> children are
+   grandchildren of .prose-content, so — same gotcha as .letter above —
+   its space-y-5 doesn't reach them; stanza spacing is set explicitly. */
+.prose-content .poem {
+  @apply mx-auto my-8 max-w-[32rem] text-left font-serifText not-italic leading-loose md:mx-0 md:ml-[6rem];
+}
+.prose-content .poem > p + p {
+  @apply mt-6;
+}
+
 .prose-content details {
   @apply my-6 rounded-xl border hairline px-4 py-3;
 }

@@ -2,7 +2,7 @@
 title: তন্ময়কে লেখা একটি খোলা চিঠি
 subtitle: >-
   এক পুরনো বন্ধুর উদ্দেশ্যে লেখা চিঠি—যেখানে লুকিয়ে আছে কিছু হতাশা ও না বলা
-  তীব্র বেদনা।
+  তীব্র বেদনা
 date: "2025-09-14"
 category: Life
 subcategories: [Memories, Relationships]

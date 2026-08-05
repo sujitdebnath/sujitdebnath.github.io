@@ -207,6 +207,33 @@ right-aligned with extra space above it. No other setup needed — just
 make sure the salutation is the first paragraph inside the `<div>` and
 the sign-off is the last.
 
+### Embedding a poem
+
+For quoting a poem, wrap it in `<div class="poem">...</div>` — same
+raw-HTML-with-a-blank-line pattern as the letter block above, but plain
+typography (no card/border): left-aligned, non-italic serif type, in a
+narrower column than normal body text.
+
+```md
+<div class="poem">
+
+<p>First line of the stanza,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;A hanging-indented line,<br>
+Back to the margin,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;And indented again.</p>
+
+<p>A second stanza starts here...</p>
+
+</div>
+```
+
+Each **stanza is its own `<p>`** (normal paragraph spacing creates the gap
+between stanzas), `<br>` handles line breaks within a stanza, and a
+leading `&nbsp;&nbsp;&nbsp;&nbsp;` on a line creates a hanging indent —
+add it per line by hand wherever the poem's own layout calls for it
+(there's no automatic indent rule; poems don't follow one predictable
+pattern).
+
 ## 5. Post types
 
 Set `type:` in the frontmatter to unlock extra chrome for a post. Omit it
