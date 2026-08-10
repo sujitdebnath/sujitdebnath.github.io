@@ -25,7 +25,7 @@ category: Life
 subcategories: [Memories, Relationships]
 tags: [friendship, nostalgia]
 readTime: 5 min read
-cover: /images/blog/my-new-post.jpg
+cover: /images/blog/my-new-post/cover.jpg
 featured: false
 preview: A one-to-two sentence teaser shown in the post list and cards.
 ---
@@ -66,8 +66,12 @@ preview: A one-to-two sentence teaser shown in the post list and cards.
 
 ## 3. Add the cover image
 
-Drop the image in `public/images/blog/` and point `cover` at it with an
-absolute path, e.g. `/images/blog/my-new-post.jpg`.
+Each post gets its own folder: `public/images/blog/<slug>/`, using the
+same slug as the post's filename. Put the cover image in there named
+`cover.<ext>` (e.g. `cover.png`, `cover.jpg`), and point `cover` at it
+with an absolute path, e.g. `/images/blog/my-new-post/cover.jpg`. Keep
+any other inline or gallery photos for that post in the same folder
+alongside it.
 
 ## 4. Write the body
 
@@ -109,7 +113,7 @@ Plain Markdown image syntax still works exactly as shown above, and remains
 the default look (modest content-column width, rounded corners):
 
 ```md
-![A smaller inline photo](/images/blog/my-photo.jpg)
+![A smaller inline photo](/images/blog/my-new-post/my-photo.jpg)
 ```
 
 For a different layout, write a literal HTML `<img>` tag with a `class`
@@ -118,7 +122,7 @@ this is the way to opt into one of five variants (a plain `<img>` tag with
 no `class` behaves identically to the Markdown shorthand above):
 
 ```md
-<img src="/images/blog/eiffel-tower.jpg" alt="The tower at dusk" class="img-large" />
+<img src="/images/blog/my-new-post/eiffel-tower.jpg" alt="The tower at dusk" class="img-large" />
 ```
 
 - **`img-large`** — breaks out wider than the text column (about 56rem,
@@ -155,9 +159,9 @@ syntax as above) in `<div class="photo-group">...</div>`:
 
 ```md
 <div class="photo-group">
-<img src="/images/blog/photo1.jpg" alt="First photo" class="img-tall" />
-<img src="/images/blog/photo2.jpg" alt="Second photo" class="img-tall" />
-<img src="/images/blog/photo3.jpg" alt="Third photo" class="img-tall" />
+<img src="/images/blog/my-new-post/photo1.jpg" alt="First photo" class="img-tall" />
+<img src="/images/blog/my-new-post/photo2.jpg" alt="Second photo" class="img-tall" />
+<img src="/images/blog/my-new-post/photo3.jpg" alt="Third photo" class="img-tall" />
 </div>
 ```
 
@@ -383,7 +387,7 @@ mark up each one as a `review-item` block with its metadata as `data-`
 attributes, and the review text as normal Markdown inside it:
 
 ```md
-<div class="review-item" data-title="Batman Begins" data-creator="Christopher Nolan" data-year="2005" data-rating="4.5" data-cover="/images/blog/batman-begins.jpg">
+<div class="review-item" data-title="Batman Begins" data-creator="Christopher Nolan" data-year="2005" data-rating="4.5" data-cover="/images/blog/nolan-batman-trilogy/batman-begins.jpg">
 
 Review text for this specific film, written as normal Markdown —
 paragraphs, blockquotes for memorable dialogue, etc.

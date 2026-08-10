@@ -267,41 +267,8 @@ export const projects = [
   },
 ];
 
-// Bucket list is brand new — these are example items so the page isn't
-// blank. Replace freely; "done" just controls the strikethrough state.
-export const bucketList = [
-  {
-    category: "Travel",
-    items: [
-      { label: "Example — Hike the Annapurna Circuit", done: false },
-      { label: "Example — Visit the Nordic countries in winter", done: false },
-    ],
-  },
-  {
-    category: "Research & Career",
-    items: [
-      {
-        label: "Example — Publish a first-author paper at a top CV venue",
-        done: false,
-      },
-      { label: "Example — Finish the PhD", done: false },
-    ],
-  },
-  {
-    category: "Personal",
-    items: [
-      { label: "Example — Read 50 books in a year", done: false },
-      { label: "Example — Cycle across a country border", done: false },
-    ],
-  },
-  {
-    category: "Skills",
-    items: [
-      { label: "Example — Get comfortable writing in German", done: false },
-      { label: "Example — Learn to sail", done: false },
-    ],
-  },
-];
+// Bucket list content lives in ./bucketlist.js, kept separate so it's
+// easier to update on its own.
 
 export const nav = [
   { label: "About", hash: "#about" },
