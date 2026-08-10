@@ -5,8 +5,9 @@ date: 2026-08-02
 category: Technology
 tags: [test]
 readTime: 3 min read
-cover: /images/blog/epitaph.png
+cover: /images/blog/epitaph/cover.png
 featured: false
+status: draft
 preview: Internal test/reference post for round 25's mediaType extension (movie variant) of the review post type. Safe to delete once verified.
 type: review
 mediaType: movie
@@ -30,7 +31,7 @@ The film lives or dies on its sound design and on Noor Rahim's performance
 as Mara, and both hold up. Rahim says more with the angle of her shoulders
 than most actors manage with a page of dialogue.
 
-<img src="/images/blog/epitaph.png" alt="img-large — breaks out wider than the text column" class="img-large" />
+<img src="/images/blog/epitaph/cover.png" alt="img-large — breaks out wider than the text column" class="img-large" />
 
 What struck me most on a second viewing was how little the script
 telegraphs. A caller mentions a name in passing in the first act; it
@@ -40,7 +41,7 @@ trusts you to remember it without underlining anything:
 > "You said that name already. Twenty minutes ago, before the lights
 > went. You don't remember saying it, do you?" - Sujit Debnath
 
-<img src="/images/blog/eiffel-tower-2.jpg" alt="A dim hallway lit only by emergency signage — the kind of quiet, low-light framing the film returns to throughout" class="img-tall" />
+<img src="/images/blog/test/eiffel-tower-2.jpg" alt="A dim hallway lit only by emergency signage — the kind of quiet, low-light framing the film returns to throughout" class="img-tall" />
 
 The middle stretch drags slightly — there's a subplot involving a
 maintenance worker that could have been trimmed by five minutes without

@@ -5,8 +5,9 @@ date: 2026-08-02
 category: Technology
 tags: [test]
 readTime: 1 min read
-cover: /images/blog/khola-chithi-tonmoy.png
+cover: /images/blog/khola-chithi-tonmoy/cover.png
 featured: false
+status: draft
 preview: Internal test post for round 25's generalized review post type (book variant). Safe to delete once verified.
 type: review
 mediaType: book

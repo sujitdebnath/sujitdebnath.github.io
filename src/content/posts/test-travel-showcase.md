@@ -5,30 +5,31 @@ date: 2026-08-01
 category: Technology
 tags: [test]
 readTime: 1 min read
-cover: /images/blog/cheleta.png
+cover: /images/blog/cheleta/cover.png
 featured: false
+status: draft
 preview: Internal test post for round 11's travel post type. Safe to delete once verified.
 type: travel
 gallery:
-  - src: /images/blog/cheleta.png
+  - src: /images/blog/cheleta/cover.png
     caption: Placeholder photo 1 (reused cover art) — click to open the lightbox.
-  - src: /images/blog/epitaph.png
+  - src: /images/blog/epitaph/cover.png
     caption: Placeholder photo 2 — Esc or click outside to close.
     size: large
-  - src: /images/blog/khola-chithi-tonmoy.png
-  - src: /images/blog/cheleta.png
+  - src: /images/blog/khola-chithi-tonmoy/cover.png
+  - src: /images/blog/cheleta/cover.png
     caption: Fourth tile, no caption on the previous one to check that case too.
-  - src: /images/blog/epitaph.png
+  - src: /images/blog/epitaph/cover.png
     caption: Fifth tile, to check arrow-key/on-screen prev-next wraparound.
-  - src: /images/blog/khola-chithi-tonmoy.png
+  - src: /images/blog/khola-chithi-tonmoy/cover.png
     caption: Round 39 — a wide tile, two columns by one row.
     size: wide
-  - src: /images/blog/epitaph.png
+  - src: /images/blog/epitaph/cover.png
     caption: Fifth tile, to check arrow-key/on-screen prev-next wraparound.
-  - src: /images/blog/eiffel-tower-2.jpg
+  - src: /images/blog/test/eiffel-tower-2.jpg
     size: tall
-  - src: /images/blog/cheleta.png
-  - src: /images/blog/eiffel-tower-1.jpg
+  - src: /images/blog/cheleta/cover.png
+  - src: /images/blog/test/eiffel-tower-1.jpg
     caption: Round 39 — a wide tile, two columns by one row.
     size: wide
 ---
@@ -43,22 +44,22 @@ Here's a smaller inline image written as standard Markdown, separate from the
 gallery grid — it should render at modest content-column width with rounded
 corners, no click-to-enlarge behavior:
 
-<img src="/images/blog/epitaph.png" alt="A smaller inline photo" />
+<img src="/images/blog/epitaph/cover.png" alt="A smaller inline photo" />
 
 Round 22 adds five layout variants for standalone inline images, written as
 raw HTML `<img>` tags with a `class`. First, `img-large` — wider than the
 text column, still centered, with a captioned line underneath from its
 `alt` text:
 
-<img src="/images/blog/eiffel-tower-1.jpg" alt="img-large — breaks out wider than the text column" class="img-large" />
+<img src="/images/blog/test/eiffel-tower-1.jpg" alt="img-large — breaks out wider than the text column" class="img-large" />
 
 Next, `img-full` — full-bleed, edge to edge across the viewport:
 
-<img src="/images/blog/cheleta.png" alt="img-full — edge-to-edge full-bleed" class="img-full" />
+<img src="/images/blog/cheleta/cover.png" alt="img-full — edge-to-edge full-bleed" class="img-full" />
 
 `img-tall` — stays at column width but crops to a fixed portrait 3:4 ratio:
 
-<img src="/images/blog/eiffel-tower-2.jpg" alt="img-tall — fixed 3:4 portrait crop" class="img-tall" />
+<img src="/images/blog/test/eiffel-tower-2.jpg" alt="img-tall — fixed 3:4 portrait crop" class="img-tall" />
 
 Round 22 also adds two floated variants. The image has to come first in the
 source, with the wrapping paragraph right after it — a float only pulls
@@ -67,7 +68,7 @@ before it.
 
 <div class="clear-both"></div>
 
-<img src="/images/blog/khola-chithi-tonmoy.png" alt="" class="img-float-right" />
+<img src="/images/blog/khola-chithi-tonmoy/cover.png" alt="" class="img-float-right" />
 
 Here's `img-float-right` in action, with this paragraph's text wrapping
 around its left side. This sentence exists purely to give the float enough
@@ -79,7 +80,7 @@ the image's bottom edge is reached.
 
 <div class="clear-both"></div>
 
-<img src="/images/blog/epitaph.png" alt="" class="img-float-left" />
+<img src="/images/blog/epitaph/cover.png" alt="" class="img-float-left" />
 
 And `img-float-left`, wrapping on its right side instead — again with
 enough trailing text in this paragraph to actually demonstrate the wrap,
@@ -106,10 +107,10 @@ photos, and should have a large top margin above its heading to clearly
 separate it from the floated-image content above.
 
 <div class="photo-group">
-<img src="/images/blog/eiffel-tower-1.jpg" alt="Nürnberg photo 1" class="img-tall" />
-<img src="/images/blog/eiffel-tower-2.jpg" alt="Nürnberg photo 2" class="img-tall" />
-<img src="/images/blog/cheleta.png" alt="Nürnberg photo 3" class="img-tall" />
-<img src="/images/blog/cheleta.png" alt="Nürnberg photo 4" class="img-tall" />
+<img src="/images/blog/test/eiffel-tower-1.jpg" alt="Nürnberg photo 1" class="img-tall" />
+<img src="/images/blog/test/eiffel-tower-2.jpg" alt="Nürnberg photo 2" class="img-tall" />
+<img src="/images/blog/cheleta/cover.png" alt="Nürnberg photo 3" class="img-tall" />
+<img src="/images/blog/cheleta/cover.png" alt="Nürnberg photo 4" class="img-tall" />
 </div>
 
 <div class="location">Paris, France</div>
@@ -119,10 +120,10 @@ Second stop, mixing tile sizes in one group: a `img-large` tile plus a
 together.
 
 <div class="photo-group">
-<img src="/images/blog/epitaph.png" alt="Paris photo 1 — large tile" class="img-large" />
-<img src="/images/blog/khola-chithi-tonmoy.png" alt="Paris photo 2 — wide tile" class="img-wide" />
-<img src="/images/blog/eiffel-tower-1.jpg" alt="Paris photo 3 — plain tile" />
-<img src="/images/blog/eiffel-tower-1.jpg" alt="Paris photo 4 — plain tile" />
+<img src="/images/blog/epitaph/cover.png" alt="Paris photo 1 — large tile" class="img-large" />
+<img src="/images/blog/khola-chithi-tonmoy/cover.png" alt="Paris photo 2 — wide tile" class="img-wide" />
+<img src="/images/blog/test/eiffel-tower-1.jpg" alt="Paris photo 3 — plain tile" />
+<img src="/images/blog/test/eiffel-tower-1.jpg" alt="Paris photo 4 — plain tile" />
 </div>
 
 <div class="location">Berlin, Germany</div>
@@ -136,10 +137,10 @@ This section checks that `photo-group` also works outside a location
 section, as plain inline content in the middle of the post body:
 
 <div class="photo-group">
-<img src="/images/blog/cheleta.png" alt="Standalone group photo 1" class="img-tall" />
-<img src="/images/blog/epitaph.png" alt="Standalone group photo 2" class="img-tall" />
-<img src="/images/blog/khola-chithi-tonmoy.png" alt="Paris photo 2 — wide tile" class="img-wide" />
-<img src="/images/blog/khola-chithi-tonmoy.png" alt="Paris photo 3 — wide tile" class="img-wide" />
+<img src="/images/blog/cheleta/cover.png" alt="Standalone group photo 1" class="img-tall" />
+<img src="/images/blog/epitaph/cover.png" alt="Standalone group photo 2" class="img-tall" />
+<img src="/images/blog/khola-chithi-tonmoy/cover.png" alt="Paris photo 2 — wide tile" class="img-wide" />
+<img src="/images/blog/khola-chithi-tonmoy/cover.png" alt="Paris photo 3 — wide tile" class="img-wide" />
 </div>
 
 Back to regular text after the standalone photo group — only 2 photos in
@@ -155,12 +156,12 @@ since it always had 4+ images (only smaller groups were reducing their
 column count).
 
 <div class="photo-group">
-<img src="/images/blog/epitaph.png" alt="Lyon photo 1 — large tile" class="img-large" />
-<img src="/images/blog/khola-chithi-tonmoy.png" alt="Lyon photo 2 — tall tile" class="img-tall" />
-<img src="/images/blog/khola-chithi-tonmoy.png" alt="Lyon photo 3 — tall tile" class="img-tall" />
-<img src="/images/blog/khola-chithi-tonmoy.png" alt="Lyon photo 4 — plain tile" />
-<img src="/images/blog/khola-chithi-tonmoy.png" alt="Lyon photo 5 — plain tile" />
-<img src="/images/blog/khola-chithi-tonmoy.png" alt="Lyon photo 6 — wide tile" class="img-wide" />
+<img src="/images/blog/epitaph/cover.png" alt="Lyon photo 1 — large tile" class="img-large" />
+<img src="/images/blog/khola-chithi-tonmoy/cover.png" alt="Lyon photo 2 — tall tile" class="img-tall" />
+<img src="/images/blog/khola-chithi-tonmoy/cover.png" alt="Lyon photo 3 — tall tile" class="img-tall" />
+<img src="/images/blog/khola-chithi-tonmoy/cover.png" alt="Lyon photo 4 — plain tile" />
+<img src="/images/blog/khola-chithi-tonmoy/cover.png" alt="Lyon photo 5 — plain tile" />
+<img src="/images/blog/khola-chithi-tonmoy/cover.png" alt="Lyon photo 6 — wide tile" class="img-wide" />
 </div>
 
 ## Round 40 — photo-group column count bug
@@ -176,26 +177,26 @@ With a fixed 4 columns, both `tall` tiles should now sit next to each
 other on row 1, to the right of the `large` tile.
 
 <div class="photo-group">
-<img src="/images/blog/eiffel-tower-1.jpg" alt="Round 40 photo 1 — large tile" class="img-large" />
-<img src="/images/blog/eiffel-tower-2.jpg" alt="Round 40 photo 2 — tall tile" class="img-tall" />
-<img src="/images/blog/cheleta.png" alt="Round 40 photo 3 — tall tile" class="img-tall" />
+<img src="/images/blog/test/eiffel-tower-1.jpg" alt="Round 40 photo 1 — large tile" class="img-large" />
+<img src="/images/blog/test/eiffel-tower-2.jpg" alt="Round 40 photo 2 — tall tile" class="img-tall" />
+<img src="/images/blog/cheleta/cover.png" alt="Round 40 photo 3 — tall tile" class="img-tall" />
 </div>
 
 Four images, all plain tiles:
 
 <div class="photo-group">
-<img src="/images/blog/epitaph.png" alt="Round 40 five-image group, photo 1" />
-<img src="/images/blog/khola-chithi-tonmoy.png" alt="Round 40 five-image group, photo 2" />
-<img src="/images/blog/eiffel-tower-1.jpg" alt="Round 40 five-image group, photo 3" />
-<img src="/images/blog/eiffel-tower-2.jpg" alt="Round 40 five-image group, photo 4" />
+<img src="/images/blog/epitaph/cover.png" alt="Round 40 five-image group, photo 1" />
+<img src="/images/blog/khola-chithi-tonmoy/cover.png" alt="Round 40 five-image group, photo 2" />
+<img src="/images/blog/test/eiffel-tower-1.jpg" alt="Round 40 five-image group, photo 3" />
+<img src="/images/blog/test/eiffel-tower-2.jpg" alt="Round 40 five-image group, photo 4" />
 </div>
 
 Another combo:
 
 <div class="photo-group">
-<img src="/images/blog/eiffel-tower-1.jpg" alt="Round 40 photo 1 — large tile" />
-<img src="/images/blog/eiffel-tower-1.jpg" alt="Round 40 photo 1 — large tile" />
-<img src="/images/blog/eiffel-tower-2.jpg" alt="Round 40 photo 2 — tall tile" class="img-tall" />
-<img src="/images/blog/cheleta.png" alt="Round 40 photo 3 — tall tile" class="img-tall" />
-<img src="/images/blog/khola-chithi-tonmoy.png" alt="Round 40 photo 3 — tall tile" class="img-wide" />
+<img src="/images/blog/test/eiffel-tower-1.jpg" alt="Round 40 photo 1 — large tile" />
+<img src="/images/blog/test/eiffel-tower-1.jpg" alt="Round 40 photo 1 — large tile" />
+<img src="/images/blog/test/eiffel-tower-2.jpg" alt="Round 40 photo 2 — tall tile" class="img-tall" />
+<img src="/images/blog/cheleta/cover.png" alt="Round 40 photo 3 — tall tile" class="img-tall" />
+<img src="/images/blog/khola-chithi-tonmoy/cover.png" alt="Round 40 photo 3 — tall tile" class="img-wide" />
 </div>

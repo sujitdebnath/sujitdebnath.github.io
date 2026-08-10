@@ -6,7 +6,7 @@ category: Writing
 subcategories: [Fiction, Stories]
 tags: [love, loss, nostalgia, family]
 readTime: 16 min read
-cover: /images/blog/epitaph.png
+cover: /images/blog/epitaph/cover.png
 featured: true
 preview: >-
   এক শীতের সকালে বাবা-ছেলে বাসে চড়ে রওনা দেয় এক বিশেষ গন্তব্যে,

@@ -5,8 +5,9 @@ date: 2026-08-04
 category: Technology
 tags: [test]
 readTime: 3 min read
-cover: /images/blog/khola-chithi-tonmoy.png
+cover: /images/blog/khola-chithi-tonmoy/cover.png
 featured: false
+status: draft
 preview: Internal test/reference post for round 39's multi-subject review-item extension. Safe to delete once verified.
 type: review
 mediaType: movie
@@ -24,7 +25,7 @@ and open straight into the first item below.
 
 ---
 
-<div class="review-item" data-title="The Salt Road" data-creator="Marcus Voss" data-year="2016" data-rating="4" data-cover="/images/blog/eiffel-tower-1.jpg">
+<div class="review-item" data-title="The Salt Road" data-creator="Marcus Voss" data-year="2016" data-rating="4" data-cover="/images/blog/test/eiffel-tower-1.jpg">
 
 The one that started it. A slow, dust-caked road movie that trades plot
 for atmosphere, and mostly gets away with it.
@@ -37,13 +38,13 @@ A strong debut entry, let down slightly by a second act that wanders.
 
 ---
 
-<div class="review-item" data-title="Salt Road: Ashfall" data-creator="Marcus Voss" data-year="2019" data-rating="4.5" data-cover="/images/blog/eiffel-tower-2.jpg">
+<div class="review-item" data-title="Salt Road: Ashfall" data-creator="Marcus Voss" data-year="2019" data-rating="4.5" data-cover="/images/blog/test/eiffel-tower-2.jpg">
 
 The strongest of the three. Tighter script, the same washed-out
 cinematography, and a much sharper sense of where the tension is
 actually coming from.
 
-<img src="/images/blog/eiffel-tower-2.jpg" alt="img-tall inline image inside a review-item, to confirm nested image variants still work here" class="img-tall" />
+<img src="/images/blog/test/eiffel-tower-2.jpg" alt="img-tall inline image inside a review-item, to confirm nested image variants still work here" class="img-tall" />
 
 > "Ash doesn't ask where it lands."
 
@@ -51,7 +52,7 @@ actually coming from.
 
 ---
 
-<div class="review-item" data-title="Salt Road: The Last Crossing" data-creator="Marcus Voss" data-year="2022" data-rating="3.5" data-cover="/images/blog/epitaph.png">
+<div class="review-item" data-title="Salt Road: The Last Crossing" data-creator="Marcus Voss" data-year="2022" data-rating="3.5" data-cover="/images/blog/epitaph/cover.png">
 
 A serviceable closer that ties off the trilogy's threads a little too
 neatly. Still worth watching for the first two films' sake, just don't

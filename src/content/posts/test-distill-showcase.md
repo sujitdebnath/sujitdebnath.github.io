@@ -5,8 +5,9 @@ date: 2026-08-01
 category: Technology
 tags: [test]
 readTime: 1 min read
-cover: /images/blog/epitaph.png
+cover: /images/blog/epitaph/cover.png
 featured: false
+status: draft
 preview: Internal test post for round 11's distill/rich-content pipeline. Safe to delete once verified.
 type: distill
 ---
@@ -107,20 +108,20 @@ Full viewport width:
 
 Default width, Markdown shorthand — should show a caption from `alt`:
 
-![A smaller inline photo, via Markdown shorthand](/images/blog/cheleta.png)
+![A smaller inline photo, via Markdown shorthand](/images/blog/cheleta/cover.png)
 
 Default width, plain `<img>` tag with no class — should render identically, caption included:
 
-<img src="/images/blog/cheleta.png" alt="A smaller inline photo, via a plain img tag" />
+<img src="/images/blog/cheleta/cover.png" alt="A smaller inline photo, via a plain img tag" />
 
 Round 39 — a `photo-group` block, in a non-travel/non-review post body,
 mixing an `img-large` tile with two `img-tall` tiles (3 photos total, so
 should lay out 2-columns-then-3 responsively, not the full 4):
 
 <div class="photo-group">
-<img src="/images/blog/eiffel-tower-1.jpg" alt="Distill photo-group 1 — large tile" class="img-large" />
-<img src="/images/blog/eiffel-tower-2.jpg" alt="Distill photo-group 2 — tall tile" class="img-tall" />
-<img src="/images/blog/khola-chithi-tonmoy.png" alt="Distill photo-group 3 — tall tile" class="img-tall" />
+<img src="/images/blog/test/eiffel-tower-1.jpg" alt="Distill photo-group 1 — large tile" class="img-large" />
+<img src="/images/blog/test/eiffel-tower-2.jpg" alt="Distill photo-group 2 — tall tile" class="img-tall" />
+<img src="/images/blog/khola-chithi-tonmoy/cover.png" alt="Distill photo-group 3 — tall tile" class="img-tall" />
 </div>
 
 ## Code Blocks
