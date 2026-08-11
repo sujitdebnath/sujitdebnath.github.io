@@ -1,3 +1,5 @@
+import { continentColors } from './src/data/continents.js'
+
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: 'class',
@@ -34,6 +36,9 @@ export default {
           soft: '#F5C51833',
           ink: '#17181A',     // text color when sitting on the accent
         },
+        // Travel Log continent pins — single source of truth in
+        // src/data/continents.js, since Leaflet DivIcons need the raw hex.
+        continents: continentColors,
       },
       fontFamily: {
         display: ['"Fraunces"', 'ui-serif', 'Georgia', 'serif'],
