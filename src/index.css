@@ -295,6 +295,136 @@ html.dark {
   z-index: 10 !important;
 }
 
+/* Travel Log map (round 48). The full-page map is taller than the embedded
+   GeoJSON block and shrinks on small screens so the stats bar and filters
+   above it aren't crowded off-screen. */
+.travel-map {
+  height: 62vh;
+  min-height: 360px;
+  width: 100%;
+}
+/* Leaflet paints the container #ddd behind the tiles, which reads as a bright
+   slab in dark mode while tiles stream in. */
+.leaflet-container.travel-map {
+  @apply bg-paper dark:bg-night;
+}
+@media (min-width: 640px) {
+  .travel-map {
+    height: 68vh;
+    min-height: 480px;
+  }
+}
+
+/* Custom DivIcon pins: a small filled disc carrying a lucide glyph, tinted
+   per continent (or the marker accent for home/current residence). */
+.travel-pin-icon {
+  background: none;
+  border: 0;
+}
+.travel-pin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 9999px;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.28);
+  position: relative;
+}
+.travel-pin__badge {
+  position: absolute;
+  top: -6px;
+  right: -9px;
+  min-width: 17px;
+  padding: 0 3px;
+  border-radius: 9999px;
+  background: theme('colors.ink.DEFAULT');
+  color: theme('colors.paper.DEFAULT');
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9px;
+  font-style: normal;
+  line-height: 14px;
+  text-align: center;
+}
+html.dark .travel-pin__badge {
+  background: theme('colors.parchment.DEFAULT');
+  color: theme('colors.night.DEFAULT');
+}
+
+/* Leaflet's popup chrome, restyled onto the site's surfaces/tokens. */
+.travel-popup .leaflet-popup-content-wrapper {
+  @apply rounded-xl border border-line bg-paper-surface text-ink dark:border-seam dark:bg-night-surface dark:text-parchment;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.18);
+}
+.travel-popup .leaflet-popup-content {
+  @apply m-0 px-4 py-3;
+}
+.travel-popup .leaflet-popup-tip {
+  @apply bg-paper-surface dark:bg-night-surface;
+}
+/* Leaflet's own `.leaflet-container a` rules outrank a bare class, so the
+   popup's links and close button are scoped through the container too. */
+.leaflet-container .travel-popup .leaflet-popup-close-button {
+  @apply text-ink-faint dark:text-parchment-faint;
+}
+.leaflet-container .travel-popup .leaflet-popup-close-button:hover {
+  @apply text-ink dark:text-parchment;
+}
+.travel-popup__anchor {
+  @apply mb-1 inline-block rounded-full bg-marker px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.12em] text-marker-ink;
+}
+.travel-popup__title {
+  @apply font-display text-base leading-snug text-ink dark:text-parchment;
+  margin: 0;
+}
+.travel-popup__tag {
+  @apply mt-1.5 inline-block rounded-full border px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.08em];
+}
+.travel-popup__summary {
+  @apply mt-2 text-[12px] leading-relaxed text-ink-muted dark:text-parchment-muted;
+  margin-bottom: 0;
+}
+.travel-popup__meta {
+  @apply mt-2 font-mono text-[11px] leading-relaxed text-ink-muted dark:text-parchment-muted;
+  margin-bottom: 0;
+}
+.travel-popup__label {
+  @apply font-mono text-[9px] uppercase tracking-[0.12em] text-ink-faint dark:text-parchment-faint;
+}
+.travel-popup__posts {
+  @apply mt-2.5 border-t border-line pt-2 dark:border-seam;
+}
+.travel-popup__posts ul {
+  @apply mt-1 space-y-1;
+  list-style: none;
+  padding: 0;
+}
+.leaflet-container a.travel-popup__link {
+  @apply font-mono text-[11px] text-ink no-underline dark:text-parchment;
+}
+.leaflet-container a.travel-popup__link:hover {
+  @apply text-marker;
+}
+
+/* The default zoom control reads as a plain hairline square on both themes
+   rather than Leaflet's stock white-on-gray chrome. */
+.travel-map .leaflet-bar {
+  border: 0;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.16);
+}
+.travel-map .leaflet-bar a {
+  @apply border-line bg-paper-surface text-ink-muted dark:border-seam dark:bg-night-surface dark:text-parchment-muted;
+}
+.travel-map .leaflet-bar a:hover {
+  @apply bg-paper text-ink dark:bg-night dark:text-parchment;
+}
+.travel-map .leaflet-control-attribution {
+  @apply bg-paper-surface/80 font-mono text-[9px] text-ink-faint dark:bg-night-surface/80 dark:text-parchment-faint;
+}
+.travel-map .leaflet-control-attribution a {
+  @apply text-ink-muted dark:text-parchment-muted;
+}
+
 .typogram-block {
   --global-text-color: #17181a;
 }
