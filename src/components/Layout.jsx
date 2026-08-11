@@ -22,7 +22,13 @@ export default function Layout() {
   return (
     <div className="flex min-h-screen flex-col">
       <Nav />
-      <main className="flex-1 pt-16">
+      {/* min-w-0 overrides the flex item's default min-width: auto, which
+          otherwise sizes `main` to fit its widest descendant's min-content —
+          a `w-screen` full-bleed element (img-full, the Travel Log map)
+          nested anywhere inside stretches `main` (and the whole page) to
+          that width instead of being clipped/centered as intended. This was
+          latent until round 50 actually rendered a live w-screen element. */}
+      <main className="min-w-0 flex-1 pt-16">
         <Outlet />
       </main>
       <Footer />

@@ -295,13 +295,22 @@ html.dark {
   z-index: 10 !important;
 }
 
-/* Travel Log map (round 48). The full-page map is taller than the embedded
-   GeoJSON block and shrinks on small screens so the stats bar and filters
-   above it aren't crowded off-screen. */
+/* Travel Log map (round 48; round 53: fixed vh-based height replaced with a
+   responsive aspect ratio). A fixed pixel/vh height stayed constant while
+   the map's full-bleed width scaled with the viewport (round 50) — at wide,
+   short viewport proportions the height became a tighter constraint than
+   the width, forcing fitBounds to zoom out further than the width alone
+   needed and leaving leftover horizontal room for repeated world copies to
+   fill. `aspect-[2/1]` keeps height scaling *with* width at every viewport
+   size instead, matching how the Antarctica-cropped WORLD_BOUNDS naturally
+   reads (see TravelMap.jsx) so height is never the binding constraint.
+   min-height is a floor for narrow/portrait screens only — it never grows
+   past what 2:1 already gives on wide screens, so it can't reintroduce the
+   same mismatch there. */
 .travel-map {
-  height: 62vh;
-  min-height: 360px;
+  aspect-ratio: 2 / 1;
   width: 100%;
+  min-height: 320px;
 }
 /* Leaflet paints the container #ddd behind the tiles, which reads as a bright
    slab in dark mode while tiles stream in. */
@@ -310,8 +319,7 @@ html.dark {
 }
 @media (min-width: 640px) {
   .travel-map {
-    height: 68vh;
-    min-height: 480px;
+    min-height: 420px;
   }
 }
 

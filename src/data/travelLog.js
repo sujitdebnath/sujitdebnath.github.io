@@ -118,6 +118,7 @@ export const lifeLocations = {
     continent: 'Asia',
     lat: 23.8103,
     lng: 90.4125,
+    note: 'Born and raised here — spent my whole childhood in this city.',
   },
   current: {
     city: 'Nürnberg',
@@ -126,5 +127,6 @@ export const lifeLocations = {
     lat: 49.4521,
     lng: 11.0767,
     since: '2021-10', // optional
+    note: 'Moved to Germany for a Master\'s degree.',
   },
 }

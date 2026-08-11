@@ -5,7 +5,7 @@ import Reveal from '../components/Reveal.jsx'
 import Dropdown from '../components/blog/Dropdown.jsx'
 import TravelMap from '../components/travel/TravelMap.jsx'
 import { travelLog, lifeLocations } from '../data/travelLog.js'
-import { continentColor } from '../data/continents.js'
+import { continentColor, continentColors } from '../data/continents.js'
 import { formatMonthYear, formatVisitDates, sortByRecency, travelStats } from '../lib/travel.js'
 
 function StatTile({ value, label }) {
@@ -38,38 +38,85 @@ function ContinentTag({ continent }) {
   )
 }
 
+// The one reusable accent-yellow dot separator used both between a place
+// name and its summary (list row line 2) and between post links (line 3) —
+// implemented once so the two spots can't drift into two different glyphs.
+function AccentDot() {
+  return (
+    <span aria-hidden="true" className="mx-1.5 text-marker">
+      ·
+    </span>
+  )
+}
+
+// Round 49: markers are the only colored thing on the map (map regions
+// themselves aren't tinted), so without this the continent palette is
+// illegible. A plain page row above the map, not a floating Leaflet
+// control — simpler to build correctly and sidesteps the z-index issues
+// Leaflet overlays have already caused elsewhere on this site.
+//
+// Round 50: always lists the full seven-continent palette, not just
+// whichever continents currently have a travelLog entry — a continent with
+// no markers yet still gets its swatch shown, just nothing on the map.
+function ContinentLegend() {
+  return (
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
+      {Object.keys(continentColors).map((c) => (
+        <span
+          key={c}
+          className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.1em] text-ink-muted dark:text-parchment-muted"
+        >
+          <span
+            className="h-2 w-2 shrink-0 rounded-full"
+            style={{ background: continentColor(c) }}
+            aria-hidden="true"
+          />
+          {c}
+        </span>
+      ))}
+    </div>
+  )
+}
+
+// Round 49: every post link runs horizontally on one line (previously
+// stacked, one per line) as part of compacting each list row down to three
+// lines total. Round 50: the separator between links is now the same
+// accent-yellow AccentDot used between the place name and summary on line 2,
+// not a plain middle dot. Round 51: more top margin than the line-1-to-2 gap
+// (which was already right) so this reads as a distinct addition rather than
+// crowding the name/summary line above it.
 function PostLinks({ posts }) {
   return (
-    <ul className="mt-3 space-y-1.5">
-      {posts.map((post) => (
-        <li key={post.blogSlug}>
-          <Link
-            to={`/blog/${post.blogSlug}`}
-            className="group mark-line inline-flex items-center gap-1.5 font-mono text-[12px] text-ink dark:text-parchment"
-          >
-            <span aria-hidden="true" className="text-ink-faint dark:text-parchment-faint">
-              →
-            </span>
+    <p className="mt-2.5 flex flex-wrap items-center font-mono text-[12px] text-ink dark:text-parchment">
+      {posts.map((post, i) => (
+        <span key={post.blogSlug} className="inline-flex items-center">
+          {i > 0 && <AccentDot />}
+          <Link to={`/blog/${post.blogSlug}`} className="group mark-line inline-flex items-center gap-1">
             {post.label}
             <ArrowUpRight
-              size={11}
+              size={10}
               strokeWidth={1.75}
               className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-marker"
             />
           </Link>
-        </li>
+        </span>
       ))}
-    </ul>
+    </p>
   )
 }
 
 // The two life locations, pinned above the chronological list and given the
 // same accent treatment as their map markers so they read as "about the
 // traveler" rather than as another trip.
-function LifeRow({ icon: Icon, heading, location, since }) {
+//
+// Round 51: switched from items-start (+ a manual mt-0.5 nudge on the icon)
+// to items-center — the icon was sitting slightly above center against the
+// two-line text block next to it. items-center vertically centers the icon
+// against the block's full height instead of eyeballing an offset.
+function LifeRow({ icon: Icon, heading, location, since, note }) {
   return (
-    <div className="flex items-start gap-3 py-4">
-      <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-marker text-marker-ink">
+    <div className="flex items-center gap-3 py-4">
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-marker text-marker-ink">
         <Icon size={14} strokeWidth={2.25} />
       </span>
       <div className="min-w-0">
@@ -80,8 +127,14 @@ function LifeRow({ icon: Icon, heading, location, since }) {
           {location.city}, {location.country}
           {since && (
             <span className="text-ink-muted dark:text-parchment-muted">
-              {' '}
-              · since {formatMonthYear(since)}
+              <AccentDot />
+              since {formatMonthYear(since)}
+            </span>
+          )}
+          {note && (
+            <span className="text-ink-muted dark:text-parchment-muted">
+              <AccentDot />
+              {note}
             </span>
           )}
         </p>
@@ -96,12 +149,18 @@ function ListView({ places }) {
   return (
     <div>
       <div className="divide-y hairline rounded-2xl border hairline bg-marker/[0.04] px-4">
-        <LifeRow icon={Home} heading="Home" location={lifeLocations.home} />
+        <LifeRow
+          icon={Home}
+          heading="Home"
+          location={lifeLocations.home}
+          note={lifeLocations.home.note}
+        />
         <LifeRow
           icon={Navigation}
           heading="Currently living"
           location={lifeLocations.current}
           since={lifeLocations.current.since}
+          note={lifeLocations.current.note}
         />
       </div>
 
@@ -110,11 +169,18 @@ function ListView({ places }) {
           No places match these filters yet.
         </p>
       ) : (
+        // Round 49: compacted from a full blog-card-style row down to a
+        // tight three-line ledger entry. Round 50: reordered — visit dates +
+        // continent tag lead (line 1), the place name is now the visual
+        // anchor at a slightly larger size (line 2, with the summary after
+        // an AccentDot), post links trail (line 3). Lines within an entry
+        // sit close together (mt-1/mt-0.5); py-3 on the row is what gives
+        // adjacent entries their clearer separation via the divider below.
         <ol className="mt-6 divide-y hairline border-t hairline">
           {sorted.map((place, i) => (
-            <Reveal as="li" key={place.id} delay={Math.min(i * 0.04, 0.3)}>
-              <div className="py-8">
-                <div className="flex flex-wrap items-center gap-2">
+            <Reveal as="li" key={place.id} delay={Math.min(i * 0.02, 0.2)}>
+              <div className="py-3">
+                <div className="flex items-center justify-between gap-2">
                   <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint dark:text-parchment-faint">
                     {place.visitDates?.length
                       ? `Visited ${formatVisitDates(place.visitDates)}`
@@ -122,17 +188,17 @@ function ListView({ places }) {
                   </p>
                   <ContinentTag continent={place.continent} />
                 </div>
-                <h2 className="mt-3 font-display text-2xl text-ink dark:text-parchment">
-                  {place.city}
-                  <span className="text-ink-muted dark:text-parchment-muted">
-                    , {place.country}
+                <p className="mt-1 text-[13px] leading-snug text-ink-muted dark:text-parchment-muted">
+                  <span className="font-medium text-[15px] text-ink dark:text-parchment sm:text-base">
+                    {place.city}, {place.country}
                   </span>
-                </h2>
-                {place.summary && (
-                  <p className="mt-2 max-w-prose text-sm leading-relaxed text-ink-muted dark:text-parchment-muted">
-                    {place.summary}
-                  </p>
-                )}
+                  {place.summary && (
+                    <>
+                      <AccentDot />
+                      {place.summary}
+                    </>
+                  )}
+                </p>
                 {place.posts?.length > 0 && <PostLinks posts={place.posts} />}
               </div>
             </Reveal>
@@ -254,14 +320,33 @@ export default function TravelLog() {
             </div>
           </div>
 
-          <div className="mt-6">
+          {view === 'map' && (
+            <div className="mt-5">
+              <ContinentLegend />
+            </div>
+          )}
+
+          <div className="mt-4">
             {view === 'map' ? (
               filtered.length === 0 ? (
                 <p className="text-sm text-ink-muted dark:text-parchment-muted">
                   No places match these filters yet.
                 </p>
               ) : (
-                <TravelMap places={filtered} lifeLocations={lifeLocations} />
+                // Full-bleed breakout: same w-screen + left-1/2 + negative-margin
+                // technique as img-full/l-screen elsewhere on the site, so the
+                // map spans (near enough) the full viewport while the header,
+                // stats, legend and filters above stay at the normal content
+                // width. Relies on the sitewide `overflow-x: hidden` on <html>
+                // (already in place for that same technique) to prevent this
+                // from introducing horizontal scroll.
+                <div className="relative left-1/2 -ml-[50vw] -mr-[50vw] w-screen">
+                  <TravelMap
+                    places={filtered}
+                    lifeLocations={lifeLocations}
+                    autoFit={continent !== 'All' || country !== 'All'}
+                  />
+                </div>
               )
             ) : (
               <ListView places={filtered} />

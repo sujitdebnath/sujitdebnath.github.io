@@ -5,17 +5,17 @@
 export const bucketList = [
   // Travel
   {
-    label: "Experience Switzerland, the paradise of the Alps",
+    label: "Experience Switzerland and discover a paradise on Earth",
     category: "Travel",
     done: false,
   },
   {
-    label: "Witness the Northern Lights in Norway",
+    label: "Witness Norway's magical Northern Lights",
     category: "Travel",
     done: false,
   },
   {
-    label: "Travel on one of the world's largest cruise ships",
+    label: "Take a journey on one of the world's largest cruise ships",
     category: "Travel",
     done: false,
   },
@@ -29,9 +29,9 @@ export const bucketList = [
     category: "Travel",
     done: false,
   },
-  { label: "Go bungee jumping", category: "Travel", done: false },
-  { label: "Go deep-sea diving", category: "Travel", done: false },
-  { label: "Go skydiving", category: "Travel", done: false },
+  { label: "Do a bungee jump", category: "Travel", done: false },
+  { label: "Do a deep-sea scuba dive", category: "Travel", done: false },
+  { label: "Do a skydive", category: "Travel", done: false },
   { label: "Visit 30 countries", category: "Travel", done: false },
   { label: "Visit all seven continents", category: "Travel", done: false },
 
@@ -48,7 +48,7 @@ export const bucketList = [
     done: false,
   },
   {
-    label: "Found an AI company that creates meaningful real-world impact",
+    label: "Found an AI company that makes a meaningful real-world impact",
     category: "Career",
     done: false,
   },
@@ -58,14 +58,14 @@ export const bucketList = [
     done: false,
   },
   {
-    label: "Make a meaningful contribution to an open-source project",
+    label: "Make a meaningful contribution to the open-source community",
     category: "Career",
     done: false,
   },
 
   // Personal
   {
-    label: "Build and maintain a strong, well-built physique",
+    label: "Build and maintain a strong and healthy physique",
     category: "Personal",
     done: false,
   },
@@ -80,10 +80,15 @@ export const bucketList = [
     category: "Personal",
     done: false,
   },
+  {
+    label: "Build my dream gaming PC and enjoy PC gaming",
+    category: "Personal",
+    done: false,
+  },
 
   // Creative
   {
-    label: "Bring my secret dream story to life",
+    label: "Finish writing my secret dream story",
     category: "Creative",
     done: false,
   },
@@ -95,7 +100,7 @@ export const bucketList = [
 
   // Skills
   {
-    label: "Achieve C1 proficiency in German",
+    label: "Achieve C1-level proficiency in German",
     category: "Skills",
     done: false,
   },
@@ -108,10 +113,15 @@ export const bucketList = [
   { label: "Learn to ride a motorbike", category: "Skills", done: false },
   { label: "Learn to swim", category: "Skills", done: false },
   {
-    label: "Develop a professional photography and videography practice",
+    label: "Learn to inline skate and confidently skate outdoors",
     category: "Skills",
     done: false,
   },
-  { label: "Learn sketching and drawing", category: "Skills", done: false },
+  {
+    label: "Develop professional-level photography and videography skills",
+    category: "Skills",
+    done: false,
+  },
+  { label: "Learn to sketch and draw", category: "Skills", done: false },
   { label: "Learn 2D animation", category: "Skills", done: false },
 ];
