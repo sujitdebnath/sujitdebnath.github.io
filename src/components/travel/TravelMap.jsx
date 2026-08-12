@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
-import { MapContainer, TileLayer, Marker, Popup, GeoJSON, useMap, useMapEvent } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, Circle, useMap, useMapEvent } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { Link } from 'react-router-dom'
-import { Home, MapPin, Navigation } from 'lucide-react'
+import { Home, Maximize, Minimize, MapPin, Navigation } from 'lucide-react'
 import { useTheme } from '../../hooks/useTheme.jsx'
 import { continentColor } from '../../data/continents.js'
 import { formatMonthYear, formatVisitDates } from '../../lib/travel.js'
@@ -40,8 +40,20 @@ const ATTRIBUTION = '&copy; OpenStreetMap contributors &copy; CARTO'
 // its full-bleed width, so at wide-but-short viewport proportions the height
 // became a *tighter* constraint than the width, forcing fitBounds to zoom
 // out further than the width needed and reintroducing the same leftover
-// space. `.travel-map` now uses `aspect-ratio: 2/1` (matching these bounds'
-// natural aspect) so height always scales with width instead.
+// space. `.travel-map` briefly used `aspect-ratio: 2/1` to tie height to
+// width instead — round 55 replaced that with a viewport-height-driven
+// clamp() (see index.css), since tying height to width just traded one
+// coupling for another (too tall on wide monitors, too short — and
+// edge-clipping — on narrow windows).
+//
+// Round 56: rounds 52-55 were all fixes to symptoms of the same root cause —
+// a map that has to correctly fit-and-zoom at *any* viewport width (phone to
+// ultrawide monitor) is inherently unstable. Round 50's full-bleed treatment
+// is reversed here: the map is back to a bounded, modest max-width (see
+// TravelLog.jsx), so its container size varies within a much narrower,
+// predictable range. A fullscreen toggle (below) covers the "I want it
+// bigger" case instead, without making the *default* embedded state fight
+// for stability across the entire viewport-width spectrum.
 const WORLD_BOUNDS = [
   [-58, -170],
   [78, 170],
@@ -78,20 +90,16 @@ const PIN_GLYPH_LIGHT = '#FAFAF9' // paper — glyph sitting on a continent tint
 const ACCENT = '#F5C518' // marker.DEFAULT
 const ACCENT_INK = '#17181A' // marker.ink
 
-// Our travelLog/lifeLocations country names don't always match the bundled
-// GeoJSON's own naming (public/data/world-countries.geojson, trimmed from
-// Natural Earth's public-domain 110m admin-0 countries dataset). Add an
-// entry here if a newly added country's border fails to highlight — check
-// the `name` property in that file for the exact spelling it expects.
-const COUNTRY_NAME_OVERRIDES = {
-  'Czech Republic': 'Czechia',
-}
-
-function findCountryFeature(data, countryName) {
-  if (!data || !countryName) return null
-  const target = (COUNTRY_NAME_OVERRIDES[countryName] || countryName).toLowerCase()
-  return data.features.find((f) => f.properties.name?.toLowerCase() === target) || null
-}
+// Round 57: places get highlighted at *their own* location on click, not
+// their country's — a bundled country-borders dataset was tried first and
+// dropped (see git history) because that's the wrong granularity entirely:
+// clicking Nürnberg could only ever highlight all of Germany with it, never
+// the city itself. Round 58: a per-place real-boundary override (also see
+// git history) was tried next and dropped too — too much manual upkeep for
+// the benefit. Just this one fixed-radius circle, every time: small enough
+// to read as "here, specifically," not "this whole region" (a 30km fallback
+// radius read as covering a huge swath of the surrounding area in practice).
+const HIGHLIGHT_RADIUS_METERS = 750
 
 function ContinentTag({ continent }) {
   return (
@@ -110,10 +118,13 @@ function PlacePopup({ place }) {
 
   return (
     <Popup className="travel-popup" minWidth={210} maxWidth={260} autoPanPadding={[24, 24]}>
+      {/* Round 57: tag-above-heading, matching the eyebrow-above-title
+          pattern used everywhere else on the site — was two evenly-spaced
+          lines (title first, tag after) with too much gap between them. */}
+      <ContinentTag continent={place.continent} />
       <p className="travel-popup__title">
         {place.city}, {place.country}
       </p>
-      <ContinentTag continent={place.continent} />
       {place.summary && <p className="travel-popup__summary">{place.summary}</p>}
 
       {hasVisits && (
@@ -160,25 +171,32 @@ function LifePopup({ heading, location, since }) {
 // visible places change, rather than leaving the map parked on a region that
 // no longer has any pins in it. When no filter is active, fits the fixed
 // WORLD_BOUNDS default instead (round 52) — in both cases the fit is
-// recomputed on mount *and* whenever the map's own container changes size,
-// since this is now a responsive full-bleed element (round 50) whose actual
-// pixel dimensions change across screen sizes and layouts; a stale fit from
-// a previous size would reintroduce the repeated-world-copy bug this
-// replaced a hardcoded center/zoom to fix (see WORLD_BOUNDS above).
+// recomputed on mount *and* whenever the map's own container changes size; a
+// stale fit from a previous size would reintroduce the repeated-world-copy
+// bug this replaced a hardcoded center/zoom to fix (see WORLD_BOUNDS above).
 //
 // Round 53: a plain `window.resize` listener isn't enough — the container's
-// rendered size can change without the window itself resizing (e.g. the
-// aspect-ratio-based height from index.css recalculating as layout above it
-// shifts). A ResizeObserver on the map's own container element reacts to its
-// actual size changing for any reason, not just whole-window resize events.
+// rendered size can change without the window itself resizing. A
+// ResizeObserver on the map's own container element reacts to its actual
+// size changing for any reason — not just whole-window resizes, but also
+// (round 56) toggling the fullscreen overlay on/off, which swaps the
+// container between the bounded embedded size and the full viewport without
+// any extra wiring needed here: the class change alone triggers this
+// observer.
 function FitToView({ points, active }) {
   const map = useMap()
   const signature = points.map((p) => `${p.lat},${p.lng}`).join('|')
 
   useEffect(() => {
     const fit = () => {
-      // The container can still be mid-layout on the very first call, so
-      // invalidateSize before every fit rather than trusting a cached size.
+      // Round 55: invalidateSize MUST run before fitBounds/setView, every
+      // time — Leaflet caches the container's pixel size internally and
+      // won't notice a CSS-driven change (or that layout has now settled)
+      // on its own, so skipping this fits against a stale size, which
+      // showed up as both inconsistent edge-clipping and a zoom that felt
+      // like it jumped too far per step. This is also why MapContainer no
+      // longer gets a `bounds` prop directly (see below) — that path called
+      // fitBounds without this invalidateSize sequencing at all.
       map.invalidateSize()
       if (active && points.length === 1) {
         map.setView([points[0].lat, points[0].lng], 5, { animate: false })
@@ -210,7 +228,7 @@ function FitToView({ points, active }) {
 
 // Clicking empty map background (not a marker — Leaflet stops marker click
 // events from bubbling to the map) is what "returning to the default view"
-// means here: clear whatever country border is currently highlighted.
+// means here: clear whatever place is currently highlighted.
 function ClearSelectionOnMapClick({ onClear }) {
   useMapEvent('click', onClear)
   return null
@@ -220,7 +238,7 @@ function PlaceMarkers({ places, lifeLocations, onSelect }) {
   const map = useMap()
 
   // Clicking a pin flies to it (Leaflet opens its popup as usual) and
-  // highlights that place's country border.
+  // highlights that place with a small circle.
   const flyTo = (event, place) => {
     map.flyTo(event.latlng, Math.max(map.getZoom(), 6), { duration: 0.8 })
     onSelect(place)
@@ -323,49 +341,31 @@ function PlaceMarkers({ places, lifeLocations, onSelect }) {
   )
 }
 
-// Outlines a single country's boundary — no fill or a very faint one, in the
-// selected place's own marker color (continent tint, or the marker accent
-// for home/current). Fetched once per map mount and cached in state; a
-// missing/unmatched country name just renders nothing (see
-// COUNTRY_NAME_OVERRIDES above for handling a mismatch).
-function CountryHighlight({ selected }) {
-  const [countries, setCountries] = useState(null)
-
-  useEffect(() => {
-    let cancelled = false
-    fetch(`${import.meta.env.BASE_URL}data/world-countries.geojson`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (!cancelled) setCountries(data)
-      })
-      .catch(() => {})
-    return () => {
-      cancelled = true
-    }
-  }, [])
-
-  const feature = useMemo(
-    () => (selected ? findCountryFeature(countries, selected.country) : null),
-    [countries, selected]
-  )
-
-  if (!feature) return null
+// Outlines the selected place itself — a small fixed-radius circle centered
+// exactly on its lat/lng. No fill or a very faint one, in the place's own
+// marker color (continent tint, or the marker accent for home/current).
+function PlaceHighlight({ selected }) {
+  if (!selected) return null
+  const { place, color } = selected
 
   return (
-    <GeoJSON
-      // Remount per country so Leaflet swaps geometry/style cleanly instead
-      // of trying to diff two unrelated polygons.
-      key={selected.country}
-      data={feature}
+    <Circle
+      // A composite key (not just place.id — lifeLocations.home/current
+      // don't have one) so Leaflet remounts the circle cleanly between
+      // places instead of trying to animate/diff between two positions.
+      key={`${place.city}-${place.country}`}
+      center={[place.lat, place.lng]}
+      radius={HIGHLIGHT_RADIUS_METERS}
       interactive={false}
-      style={{ color: selected.color, weight: 2, opacity: 0.9, fillColor: selected.color, fillOpacity: 0.06 }}
+      pathOptions={{ color, weight: 2, opacity: 0.9, fillColor: color, fillOpacity: 0.06 }}
     />
   )
 }
 
 export default function TravelMap({ places, lifeLocations, autoFit }) {
   const { theme } = useTheme()
-  const [selected, setSelected] = useState(null) // { country, color } | null
+  const [selected, setSelected] = useState(null) // { place, color } | null
+  const [isFullscreen, setIsFullscreen] = useState(false)
 
   // Home and current residence are always on the map, so they belong in the
   // fitted bounds too — otherwise filtering to one region can leave them
@@ -375,9 +375,9 @@ export default function TravelMap({ places, lifeLocations, autoFit }) {
     [places, lifeLocations]
   )
 
-  // The highlighted border is scoped to whatever's currently visible — if a
+  // The highlight circle is scoped to whatever's currently visible — if a
   // filter change (or toggling back from List) changes the marker set,
-  // clear it rather than leaving a border for a place that may no longer be
+  // clear it rather than leaving a circle for a place that may no longer be
   // on screen.
   useEffect(() => {
     setSelected(null)
@@ -385,7 +385,7 @@ export default function TravelMap({ places, lifeLocations, autoFit }) {
 
   const selectPlace = (place) =>
     setSelected({
-      country: place.country,
+      place,
       color: place === lifeLocations.home || place === lifeLocations.current
         ? ACCENT
         : continentColor(place.continent),
@@ -393,22 +393,66 @@ export default function TravelMap({ places, lifeLocations, autoFit }) {
 
   return (
     // `isolate` (plus the capped .leaflet-pane z-indices in index.css) keeps
-    // Leaflet's internal stacking from climbing over the site's fixed nav —
-    // more important here than on the small embedded GeoJSON map, since this
-    // one runs the full width of the page. Round 50: the page now renders
-    // this full-bleed (see TravelLog.jsx), so — matching the site's existing
-    // img-full convention — it drops the boxed rounded/border chrome that
-    // made sense at content-column width; rounded corners sitting right at
-    // the viewport edge would just look clipped/broken.
-    <div className="isolate overflow-hidden">
+    // Leaflet's internal stacking from climbing over the site's fixed nav.
+    // Round 56: the map is bounded/embedded again (see TravelLog.jsx), so the
+    // rounded/border card chrome round 50 dropped for the full-bleed
+    // treatment comes back — it's no longer sitting flush against the
+    // viewport edge. In fullscreen, `fixed inset-0` overrides all of that:
+    // square corners, no border, covering literally everything (z-[100],
+    // above the fixed nav's z-50) with an explicit background so nothing
+    // behind it can show through before the tiles paint.
+    <div
+      className={
+        isFullscreen
+          ? 'travel-map-wrap--fullscreen fixed inset-0 z-[100] isolate overflow-hidden bg-paper dark:bg-night'
+          : 'relative isolate overflow-hidden rounded-2xl border hairline'
+      }
+    >
+      <button
+        type="button"
+        onClick={() => setIsFullscreen((f) => !f)}
+        aria-label={isFullscreen ? 'Exit fullscreen' : 'View map fullscreen'}
+        className="absolute right-3 top-3 z-[1000] flex h-9 w-9 items-center justify-center rounded-full border hairline bg-paper-surface text-ink-muted shadow-sm transition-colors hover:text-ink dark:bg-night-surface dark:text-parchment-muted dark:hover:text-parchment"
+      >
+        {isFullscreen ? (
+          <Minimize size={16} strokeWidth={1.75} />
+        ) : (
+          <Maximize size={16} strokeWidth={1.75} />
+        )}
+      </button>
       <MapContainer
-        bounds={WORLD_BOUNDS}
-        minZoom={2}
+        // Round 55: this used to be `bounds={WORLD_BOUNDS}`, which made
+        // react-leaflet call fitBounds internally at map-creation time — a
+        // *second*, unsequenced fitBounds call that runs before FitToView's
+        // effect gets a chance to invalidateSize() first, so it could fit
+        // against a stale/pre-layout container size (compounding the
+        // edge-clipping bug this round fixes). center/zoom here are just a
+        // valid, cheap initial state — FitToView below immediately replaces
+        // it with the real, correctly-sequenced (invalidateSize-then-fit)
+        // world view on the very next frame, so the exact numbers barely
+        // matter.
+        center={[20, 10]}
+        zoom={2}
+        // Round 56: at the new bounded container size, a plain fitBounds to
+        // WORLD_BOUNDS landed noticeably more zoomed-out than the reference
+        // (no country names legible) — minZoom=3 is a floor that keeps the
+        // world view at a more legible zoom level, exactly as anticipated.
+        // Safe against the repeated-world-copy bug rounds 52/53 fixed: at
+        // zoom 3 the world is already wider (2048px) than this container's
+        // ~1280px max-width, so this floor only ever zooms *in* relative to
+        // what a bare fit would pick, never creates leftover horizontal room.
+        minZoom={3}
+        zoomSnap={0.25}
         maxBounds={MAX_BOUNDS}
         maxBoundsViscosity={1.0}
         worldCopyJump={false}
         scrollWheelZoom
         attributionControl
+        // react-leaflet only applies `className` once, at initial map
+        // construction — it does not reactively re-sync on later renders.
+        // So the fullscreen-vs-embedded height swap (index.css) is scoped
+        // through the *wrapper* div's class instead (which is a plain,
+        // reactive element), not through toggling this prop.
         className="travel-map"
       >
         {/* Remount on theme change so the tile URL *and* its attribution swap.
@@ -426,7 +470,7 @@ export default function TravelMap({ places, lifeLocations, autoFit }) {
         <FitToView points={fitPoints} active={autoFit} />
         <PlaceMarkers places={places} lifeLocations={lifeLocations} onSelect={selectPlace} />
         <ClearSelectionOnMapClick onClear={() => setSelected(null)} />
-        <CountryHighlight selected={selected} />
+        <PlaceHighlight selected={selected} />
       </MapContainer>
     </div>
   )

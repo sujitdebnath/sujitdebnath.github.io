@@ -295,32 +295,35 @@ html.dark {
   z-index: 10 !important;
 }
 
-/* Travel Log map (round 48; round 53: fixed vh-based height replaced with a
-   responsive aspect ratio). A fixed pixel/vh height stayed constant while
-   the map's full-bleed width scaled with the viewport (round 50) — at wide,
-   short viewport proportions the height became a tighter constraint than
-   the width, forcing fitBounds to zoom out further than the width alone
-   needed and leaving leftover horizontal room for repeated world copies to
-   fill. `aspect-[2/1]` keeps height scaling *with* width at every viewport
-   size instead, matching how the Antarctica-cropped WORLD_BOUNDS naturally
-   reads (see TravelMap.jsx) so height is never the binding constraint.
-   min-height is a floor for narrow/portrait screens only — it never grows
-   past what 2:1 already gives on wide screens, so it can't reintroduce the
-   same mismatch there. */
+/* Travel Log map (round 48; round 53: fixed vh height → aspect-ratio; round
+   55: aspect-ratio → viewport-height-driven, since the round-53 fix traded
+   one coupling for another; round 56: the map itself went back to a bounded
+   max-width instead of full-bleed (see TravelLog.jsx), so width no longer
+   swings from phone to ultrawide-monitor extremes — height stays driven by
+   viewport height, just with a narrower, calmer clamp() range now that it
+   doesn't have to compensate for as wide a range of widths. */
 .travel-map {
-  aspect-ratio: 2 / 1;
+  height: clamp(450px, 65vh, 650px);
   width: 100%;
-  min-height: 320px;
+}
+/* Round 56: the fullscreen overlay (TravelMap.jsx) needs the map to fill its
+   `fixed inset-0` wrapper exactly, not the clamped embedded height above.
+   Scoped through the *wrapper's* class (`.travel-map-wrap--fullscreen`), not
+   a class on `.travel-map` itself — react-leaflet only applies the
+   MapContainer `className` prop once, at initial construction, so toggling
+   it on later re-renders (e.g. on a fullscreen state change) silently does
+   nothing; the wrapper is a plain, reactive div, so scoping through an
+   ancestor selector here actually works. (Higher specificity — a descendant
+   selector plus a class, vs. the bare one-class rule above — wins regardless
+   of source order, and `height` is a single clamp() value with no separate
+   min/max-height needing a matching override.) */
+.travel-map-wrap--fullscreen .travel-map {
+  height: 100%;
 }
 /* Leaflet paints the container #ddd behind the tiles, which reads as a bright
    slab in dark mode while tiles stream in. */
 .leaflet-container.travel-map {
   @apply bg-paper dark:bg-night;
-}
-@media (min-width: 640px) {
-  .travel-map {
-    min-height: 420px;
-  }
 }
 
 /* Custom DivIcon pins: a small filled disc carrying a lucide glyph, tinted
@@ -386,7 +389,15 @@ html.dark .travel-pin__badge {
   margin: 0;
 }
 .travel-popup__tag {
-  @apply mt-1.5 inline-block rounded-full border px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.08em];
+  /* Round 57: now the *first* element in the popup (tag-above-heading, like
+     the site's eyebrow-above-title pattern), so this is margin-bottom (space
+     before the title below it) rather than the old margin-top — deliberately
+     not touching .travel-popup__title's own margin, which LifePopup also
+     uses via its own already-correct .travel-popup__anchor spacing. Round 58:
+     mb-1.5 (6px) still read as a visible gap in practice — tightened to mb-1
+     (4px), matching .travel-popup__anchor's own gap so both popup headers
+     use the same tight tag/heading spacing. */
+  @apply mb-1 inline-block rounded-full border px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.08em];
 }
 .travel-popup__summary {
   @apply mt-2 text-[12px] leading-relaxed text-ink-muted dark:text-parchment-muted;

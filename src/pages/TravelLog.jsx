@@ -333,14 +333,18 @@ export default function TravelLog() {
                   No places match these filters yet.
                 </p>
               ) : (
-                // Full-bleed breakout: same w-screen + left-1/2 + negative-margin
-                // technique as img-full/l-screen elsewhere on the site, so the
-                // map spans (near enough) the full viewport while the header,
-                // stats, legend and filters above stay at the normal content
-                // width. Relies on the sitewide `overflow-x: hidden` on <html>
-                // (already in place for that same technique) to prevent this
-                // from introducing horizontal scroll.
-                <div className="relative left-1/2 -ml-[50vw] -mr-[50vw] w-screen">
+                // Round 56: reverses the round-50 full-bleed treatment — a
+                // map that has to correctly fit-and-zoom at *any* viewport
+                // width (phone to ultrawide monitor) turned out to be
+                // inherently unstable (rounds 52-55). Bounded to a modest
+                // max-width instead, matching the site's existing breakout
+                // math (img-large: content column ±7rem at lg:) — here ±6rem
+                // against the max-w-content (68rem) column reaches exactly
+                // 80rem, centered the same way since equal margins on both
+                // sides don't shift the horizontal center. The "I want it
+                // bigger" case is covered by the fullscreen toggle inside
+                // TravelMap itself instead.
+                <div className="lg:-ml-[6rem] lg:-mr-[6rem] lg:w-[calc(100%+12rem)]">
                   <TravelMap
                     places={filtered}
                     lifeLocations={lifeLocations}
