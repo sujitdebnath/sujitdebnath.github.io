@@ -6,7 +6,13 @@ import Dropdown from '../components/blog/Dropdown.jsx'
 import TravelMap from '../components/travel/TravelMap.jsx'
 import { travelLog, lifeLocations } from '../data/travelLog.js'
 import { continentColor, continentColors } from '../data/continents.js'
-import { formatMonthYear, formatVisitDates, sortByRecency, travelStats } from '../lib/travel.js'
+import {
+  formatMonthYear,
+  formatPlaceName,
+  formatVisitDates,
+  sortByRecency,
+  travelStats,
+} from '../lib/travel.js'
 
 function StatTile({ value, label }) {
   return (
@@ -34,6 +40,20 @@ function ContinentTag({ continent }) {
       style={{ color: continentColor(continent), borderColor: continentColor(continent) }}
     >
       {continent}
+    </span>
+  )
+}
+
+// Round 63: a lightweight, neutral (not continent-colored, not the
+// marker-yellow accent) outline pill flagging a non-city entry — same
+// shape/sizing as ContinentTag, just muted instead of continent-tinted, so
+// it reads as secondary context rather than competing with the continent
+// pill. Omitted entirely for "city" (default) entries, not shown as a
+// redundant CITY pill everywhere.
+function PlaceTypeTag({ children }) {
+  return (
+    <span className="rounded-full border hairline px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.08em] text-ink-muted dark:text-parchment-muted">
+      {children}
     </span>
   )
 }
@@ -121,10 +141,11 @@ function LifeRow({ icon: Icon, heading, location, since, note }) {
       </span>
       <div className="min-w-0">
         <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-faint dark:text-parchment-faint">
-          {heading}
+          <span>{heading} in </span>
+          <span className="text-marker">{location.continent}</span>
         </p>
         <p className="mt-1 text-sm text-ink dark:text-parchment sm:text-base">
-          {location.city}, {location.country}
+          {formatPlaceName(location)}
           {since && (
             <span className="text-ink-muted dark:text-parchment-muted">
               <AccentDot />
@@ -143,29 +164,38 @@ function LifeRow({ icon: Icon, heading, location, since, note }) {
   )
 }
 
-function ListView({ places }) {
+// Round 65: home/current now respect the active continent/country filter
+// (passed in as `null` when they don't match, per the explicit "filter them
+// like normal entries" choice over "always show") — the life card box is
+// omitted entirely when neither matches, rather than rendering an empty
+// bordered shell.
+function ListView({ places, homeLocation, currentLocation }) {
   const sorted = useMemo(() => sortByRecency(places), [places])
+  const hasLifeRows = Boolean(homeLocation || currentLocation)
 
   return (
     <div>
-      <div className="divide-y hairline rounded-2xl border hairline bg-marker/[0.04] px-4">
-        <LifeRow
-          icon={Home}
-          heading="Home"
-          location={lifeLocations.home}
-          note={lifeLocations.home.note}
-        />
-        <LifeRow
-          icon={Navigation}
-          heading="Currently living"
-          location={lifeLocations.current}
-          since={lifeLocations.current.since}
-          note={lifeLocations.current.note}
-        />
-      </div>
+      {hasLifeRows && (
+        <div className="divide-y hairline rounded-2xl border hairline bg-marker/[0.04] px-4">
+          {homeLocation && (
+            <LifeRow icon={Home} heading="Home" location={homeLocation} note={homeLocation.note} />
+          )}
+          {currentLocation && (
+            <LifeRow
+              icon={Navigation}
+              heading="Currently living"
+              location={currentLocation}
+              since={currentLocation.since}
+              note={currentLocation.note}
+            />
+          )}
+        </div>
+      )}
 
       {sorted.length === 0 ? (
-        <p className="mt-10 text-sm text-ink-muted dark:text-parchment-muted">
+        <p
+          className={`text-sm text-ink-muted dark:text-parchment-muted ${hasLifeRows ? 'mt-10' : ''}`}
+        >
           No places match these filters yet.
         </p>
       ) : (
@@ -176,7 +206,7 @@ function ListView({ places }) {
         // an AccentDot), post links trail (line 3). Lines within an entry
         // sit close together (mt-1/mt-0.5); py-3 on the row is what gives
         // adjacent entries their clearer separation via the divider below.
-        <ol className="mt-6 divide-y hairline border-t hairline">
+        <ol className={`divide-y hairline border-t hairline ${hasLifeRows ? 'mt-6' : ''}`}>
           {sorted.map((place, i) => (
             <Reveal as="li" key={place.id} delay={Math.min(i * 0.02, 0.2)}>
               <div className="py-3">
@@ -186,11 +216,16 @@ function ListView({ places }) {
                       ? `Visited ${formatVisitDates(place.visitDates)}`
                       : 'No visit dates recorded'}
                   </p>
-                  <ContinentTag continent={place.continent} />
+                  <div className="flex items-center gap-1.5">
+                    {place.placeType === 'landmark' && (
+                      <PlaceTypeTag>Landmark</PlaceTypeTag>
+                    )}
+                    <ContinentTag continent={place.continent} />
+                  </div>
                 </div>
                 <p className="mt-1 text-[13px] leading-snug text-ink-muted dark:text-parchment-muted">
                   <span className="font-medium text-[15px] text-ink dark:text-parchment sm:text-base">
-                    {place.city}, {place.country}
+                    {formatPlaceName(place)}
                   </span>
                   {place.summary && (
                     <>
@@ -214,18 +249,42 @@ export default function TravelLog() {
   const [continent, setContinent] = useState('All')
   const [country, setCountry] = useState('All')
 
+  // Round 65: option lists now include lifeLocations.home/.current
+  // alongside travelLog[] — previously only travelLog fed these, which left
+  // the filters unable to select a country/continent that only exists via
+  // home or current (e.g. Bangladesh, home-only in this dataset) even
+  // though the stats bar above already counts it.
   const continentOptions = useMemo(
-    () => ['All', ...Array.from(new Set(travelLog.map((p) => p.continent))).sort()],
+    () => [
+      'All',
+      ...Array.from(
+        new Set([
+          ...travelLog.map((p) => p.continent),
+          lifeLocations.home.continent,
+          lifeLocations.current.continent,
+        ])
+      ).sort(),
+    ],
     []
   )
 
-  // Cascades off the continent, same as the Blog page's Category →
-  // Subcategory pair: only the countries present inside the current continent.
-  const countryOptions = useMemo(() => {
-    if (continent === 'All') return ['All']
-    const inContinent = travelLog.filter((p) => p.continent === continent)
-    return ['All', ...Array.from(new Set(inContinent.map((p) => p.country))).sort()]
-  }, [continent])
+  // Round 64: deliberately NOT cascaded off the continent filter, unlike
+  // the Blog page's Category → Subcategory pair (that convention stays
+  // as-is for blog filters; Travel Log opts out). Always every country in
+  // the dataset, so picking a continent first isn't required to find one.
+  const countryOptions = useMemo(
+    () => [
+      'All',
+      ...Array.from(
+        new Set([
+          ...travelLog.map((p) => p.country),
+          lifeLocations.home.country,
+          lifeLocations.current.country,
+        ])
+      ).sort(),
+    ],
+    []
+  )
 
   const filtered = useMemo(
     () =>
@@ -237,11 +296,72 @@ export default function TravelLog() {
     [continent, country]
   )
 
+  // Round 65: home/current are now subject to the same continent/country
+  // filter as any travelLog entry (chosen over "always visible" — see the
+  // round's own explicit judgment call). `null` means "filtered out,"
+  // consumed by both ListView (omit the row) and TravelMap (omit the
+  // marker/fit point) below.
+  const matchesFilter = (place) =>
+    (continent === 'All' || place.continent === continent) &&
+    (country === 'All' || place.country === country)
+
+  const visibleLifeLocations = useMemo(
+    () => ({
+      home: matchesFilter(lifeLocations.home) ? lifeLocations.home : null,
+      current: matchesFilter(lifeLocations.current) ? lifeLocations.current : null,
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [continent, country]
+  )
+
+  const hasAnyResults =
+    filtered.length > 0 || Boolean(visibleLifeLocations.home) || Boolean(visibleLifeLocations.current)
+
   const stats = useMemo(() => travelStats(travelLog, lifeLocations), [])
 
+  // Round 65: the country → continent lookup now checks lifeLocations too,
+  // not just travelLog — needed since round 65 also made a home/current-only
+  // country (e.g. Bangladesh) selectable in the first place.
+  function continentForCountry(name) {
+    if (lifeLocations.home.country === name) return lifeLocations.home.continent
+    if (lifeLocations.current.country === name) return lifeLocations.current.continent
+    return travelLog.find((p) => p.country === name)?.continent
+  }
+
+  // Round 64.2: closes the loop the other direction from round 64.1's
+  // country → continent sync — changing continent now resets country back
+  // to "All" only when the currently selected country actually conflicts
+  // with the newly picked continent (e.g. country=India, continent changed
+  // to Europe). A compatible pick (country=Germany, continent changed from
+  // "All" to Europe) leaves country untouched. Together with round 64.1
+  // this makes the pair mutually consistent in both directions, so the
+  // "No places match these filters yet." contradictory case can no longer
+  // be reached via either dropdown.
   function selectContinent(next) {
     setContinent(next)
-    setCountry('All')
+    if (next === 'All' || country === 'All') return
+    const countryContinent = continentForCountry(country)
+    if (countryContinent && countryContinent !== next) {
+      setCountry('All')
+    }
+  }
+
+  // Round 64.1: selecting a country now syncs continent to that country's
+  // actual continent (rather than round 64's original "reset to All" on a
+  // mismatch) — picking India while Europe is selected moves the continent
+  // filter to Asia instead of clearing it. Picking "All" for country still
+  // resets continent to "All" too. The reverse (continent change) still
+  // intentionally leaves country alone, unchanged from round 64.
+  function selectCountry(next) {
+    setCountry(next)
+    if (next === 'All') {
+      setContinent('All')
+      return
+    }
+    const countryContinent = continentForCountry(next)
+    if (countryContinent) {
+      setContinent(countryContinent)
+    }
   }
 
   const toggleButton = (id, label, Icon) => (
@@ -274,7 +394,11 @@ export default function TravelLog() {
             about it afterwards.
           </p>
 
-          {/* Phase 4: personal framing, straight from lifeLocations. */}
+          {/* Phase 4: personal framing, straight from lifeLocations. City +
+              country only here (deliberately skips state) — this line is
+              a compact one-liner, unlike the popup/list rows elsewhere on
+              this page which use the full formatPlaceName() including
+              state. */}
           <p className="mt-6 font-mono text-[12px] uppercase tracking-[0.12em] text-ink-faint dark:text-parchment-faint">
             Based in {lifeLocations.current.city}, {lifeLocations.current.country} ·
             Originally from {lifeLocations.home.city}, {lifeLocations.home.country}
@@ -312,8 +436,7 @@ export default function TravelLog() {
                 <Dropdown
                   value={country}
                   options={countryOptions}
-                  onChange={setCountry}
-                  disabled={continent === 'All'}
+                  onChange={selectCountry}
                   uppercase={false}
                 />
               </div>
@@ -328,7 +451,7 @@ export default function TravelLog() {
 
           <div className="mt-4">
             {view === 'map' ? (
-              filtered.length === 0 ? (
+              !hasAnyResults ? (
                 <p className="text-sm text-ink-muted dark:text-parchment-muted">
                   No places match these filters yet.
                 </p>
@@ -347,13 +470,17 @@ export default function TravelLog() {
                 <div className="lg:-ml-[6rem] lg:-mr-[6rem] lg:w-[calc(100%+12rem)]">
                   <TravelMap
                     places={filtered}
-                    lifeLocations={lifeLocations}
+                    lifeLocations={visibleLifeLocations}
                     autoFit={continent !== 'All' || country !== 'All'}
                   />
                 </div>
               )
             ) : (
-              <ListView places={filtered} />
+              <ListView
+                places={filtered}
+                homeLocation={visibleLifeLocations.home}
+                currentLocation={visibleLifeLocations.current}
+              />
             )}
           </div>
         </Reveal>

@@ -382,7 +382,13 @@ html.dark .travel-pin__badge {
   @apply text-ink dark:text-parchment;
 }
 .travel-popup__anchor {
-  @apply mb-1 inline-block rounded-full bg-marker px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.12em] text-marker-ink;
+  /* Round 62: border-transparent matches .travel-popup__tag's own 1px
+     border — without it the badge's box is 2px shorter than the outlined
+     tag's (padding-only vs. padding+border), which threw off their
+     vertical centering once the two sit side by side in a flex row. Same
+     box height on both means `items-center` centers them exactly, not
+     just approximately. */
+  @apply mb-1 inline-block rounded-full border border-transparent bg-marker px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.12em] text-marker-ink;
 }
 .travel-popup__title {
   @apply font-display text-base leading-snug text-ink dark:text-parchment;

@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 import { Home, Maximize, Minimize, MapPin, Navigation } from 'lucide-react'
 import { useTheme } from '../../hooks/useTheme.jsx'
 import { continentColor } from '../../data/continents.js'
-import { formatMonthYear, formatVisitDates } from '../../lib/travel.js'
+import { formatMonthYear, formatPlaceName, formatVisitDates } from '../../lib/travel.js'
 
 // CARTO basemaps: Positron in light mode, Dark Matter in dark. Both are
 // OSM-derived, so both carry the same attribution as the GeoJSON map block.
@@ -112,19 +112,37 @@ function ContinentTag({ continent }) {
   )
 }
 
+// Round 63: a lightweight, neutral (not continent-colored, not the
+// marker-yellow accent — that's reserved for home/current/ongoing/selected
+// states) outline pill flagging a non-city entry. No marker icon/shape
+// change yet — that's deferred until there are more `placeType: "landmark"`
+// entries to design a real icon system against.
+function PlaceTypeTag({ children }) {
+  return (
+    <span className="travel-popup__tag hairline text-ink-muted dark:text-parchment-muted">
+      {children}
+    </span>
+  )
+}
+
 function PlacePopup({ place }) {
   const hasVisits = Boolean(place.visitDates?.length)
   const hasPosts = Boolean(place.posts?.length)
+  const isLandmark = place.placeType === 'landmark'
 
   return (
     <Popup className="travel-popup" minWidth={210} maxWidth={260} autoPanPadding={[24, 24]}>
       {/* Round 57: tag-above-heading, matching the eyebrow-above-title
           pattern used everywhere else on the site — was two evenly-spaced
-          lines (title first, tag after) with too much gap between them. */}
-      <ContinentTag continent={place.continent} />
-      <p className="travel-popup__title">
-        {place.city}, {place.country}
-      </p>
+          lines (title first, tag after) with too much gap between them.
+          Round 63: continent tag now shares a row with the optional
+          landmark tag, same flex-row pattern round 62 introduced for the
+          home/current popup's badge + continent tag. */}
+      <div className="flex items-center gap-2">
+        <ContinentTag continent={place.continent} />
+        {isLandmark && <PlaceTypeTag>Landmark</PlaceTypeTag>}
+      </div>
+      <p className="travel-popup__title">{formatPlaceName(place)}</p>
       {place.summary && <p className="travel-popup__summary">{place.summary}</p>}
 
       {hasVisits && (
@@ -156,10 +174,16 @@ function PlacePopup({ place }) {
 function LifePopup({ heading, location, since }) {
   return (
     <Popup className="travel-popup" minWidth={190} maxWidth={240} autoPanPadding={[24, 24]}>
-      <span className="travel-popup__anchor">{heading}</span>
-      <p className="travel-popup__title">
-        {location.city}, {location.country}
-      </p>
+      {/* Round 62: badge + continent tag share one row (were stacked on
+          separate lines) — items-center relies on both pills having the
+          same box height, see .travel-popup__anchor's border-transparent
+          fix in index.css. */}
+      <div className="flex items-center gap-2">
+        <span className="travel-popup__anchor">{heading}</span>
+        <ContinentTag continent={location.continent} />
+      </div>
+      <p className="travel-popup__title">{formatPlaceName(location)}</p>
+      {location.note && <p className="travel-popup__summary">{location.note}</p>}
       {since && (
         <p className="travel-popup__meta">Based here since {formatMonthYear(since)}</p>
       )}
@@ -234,6 +258,11 @@ function ClearSelectionOnMapClick({ onClear }) {
   return null
 }
 
+// Round 65: home/current are now nullable — `null` when the active
+// continent/country filter excludes them (see TravelLog.jsx's
+// `visibleLifeLocations`), per the explicit "filter them like normal
+// entries" choice over "always show regardless of filter." Every spot
+// below that used to assume both always exist now guards for null first.
 function PlaceMarkers({ places, lifeLocations, onSelect }) {
   const map = useMap()
 
@@ -274,8 +303,6 @@ function PlaceMarkers({ places, lifeLocations, onSelect }) {
   }, [places])
 
   const icons = useMemo(() => {
-    const homeShift = offsetFor(home)
-    const currentShift = offsetFor(current)
     const shifted = (icon, dx) => {
       if (!dx) return icon
       icon.options.iconAnchor = [13 + dx, 13]
@@ -283,22 +310,26 @@ function PlaceMarkers({ places, lifeLocations, onSelect }) {
       return icon
     }
     return {
-      home: shifted(
-        buildPin({
-          color: ACCENT,
-          glyphColor: ACCENT_INK,
-          glyph: <Home size={13} strokeWidth={2.25} />,
-        }),
-        homeShift
-      ),
-      current: shifted(
-        buildPin({
-          color: ACCENT,
-          glyphColor: ACCENT_INK,
-          glyph: <Navigation size={13} strokeWidth={2.25} />,
-        }),
-        currentShift
-      ),
+      home: home
+        ? shifted(
+            buildPin({
+              color: ACCENT,
+              glyphColor: ACCENT_INK,
+              glyph: <Home size={13} strokeWidth={2.25} />,
+            }),
+            offsetFor(home)
+          )
+        : null,
+      current: current
+        ? shifted(
+            buildPin({
+              color: ACCENT,
+              glyphColor: ACCENT_INK,
+              glyph: <Navigation size={13} strokeWidth={2.25} />,
+            }),
+            offsetFor(current)
+          )
+        : null,
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [home, current, places])
@@ -311,32 +342,34 @@ function PlaceMarkers({ places, lifeLocations, onSelect }) {
           position={[place.lat, place.lng]}
           icon={placeIcons[place.id]}
           eventHandlers={{ click: (e) => flyTo(e, place) }}
-          title={`${place.city}, ${place.country}`}
+          title={formatPlaceName(place)}
         >
           <PlacePopup place={place} />
         </Marker>
       ))}
 
-      {/* The two life locations always render — they stand for the person,
-          not a trip, so continent/country filters don't remove them. */}
-      <Marker
-        position={[home.lat, home.lng]}
-        icon={icons.home}
-        eventHandlers={{ click: (e) => flyTo(e, home) }}
-        zIndexOffset={500}
-        title={`Home — ${home.city}, ${home.country}`}
-      >
-        <LifePopup heading="Home" location={home} />
-      </Marker>
-      <Marker
-        position={[current.lat, current.lng]}
-        icon={icons.current}
-        eventHandlers={{ click: (e) => flyTo(e, current) }}
-        zIndexOffset={500}
-        title={`Currently living — ${current.city}, ${current.country}`}
-      >
-        <LifePopup heading="Currently living" location={current} since={current.since} />
-      </Marker>
+      {home && (
+        <Marker
+          position={[home.lat, home.lng]}
+          icon={icons.home}
+          eventHandlers={{ click: (e) => flyTo(e, home) }}
+          zIndexOffset={500}
+          title={`Home — ${formatPlaceName(home)}`}
+        >
+          <LifePopup heading="Home" location={home} />
+        </Marker>
+      )}
+      {current && (
+        <Marker
+          position={[current.lat, current.lng]}
+          icon={icons.current}
+          eventHandlers={{ click: (e) => flyTo(e, current) }}
+          zIndexOffset={500}
+          title={`Currently living — ${formatPlaceName(current)}`}
+        >
+          <LifePopup heading="Currently living" location={current} since={current.since} />
+        </Marker>
+      )}
     </>
   )
 }
@@ -367,11 +400,10 @@ export default function TravelMap({ places, lifeLocations, autoFit }) {
   const [selected, setSelected] = useState(null) // { place, color } | null
   const [isFullscreen, setIsFullscreen] = useState(false)
 
-  // Home and current residence are always on the map, so they belong in the
-  // fitted bounds too — otherwise filtering to one region can leave them
-  // stranded off-screen.
+  // Home/current belong in the fitted bounds whenever they're actually on
+  // the map (round 65: they may now be `null`, filtered out like this).
   const fitPoints = useMemo(
-    () => [...places, lifeLocations.home, lifeLocations.current],
+    () => [...places, lifeLocations.home, lifeLocations.current].filter(Boolean),
     [places, lifeLocations]
   )
 

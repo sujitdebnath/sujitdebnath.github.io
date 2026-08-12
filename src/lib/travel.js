@@ -15,6 +15,15 @@ export function formatVisitDates(visitDates = []) {
   return visitDates.map(formatMonthYear).join(', ')
 }
 
+// The one place-name string every display spot (map popups, marker titles,
+// list rows) builds from — so a place with just city+country still reads as
+// simple as before, while one that also needs a metro/state for context (a
+// smaller town near a bigger recognizable city, in a specific state/province)
+// gets it consistently everywhere at once.
+export function formatPlaceName(place) {
+  return [place.city, place.metro, place.state, place.country].filter(Boolean).join(', ')
+}
+
 // Sort key for a place: its most recent visit, as a 'YYYY-MM' string so it
 // compares lexically. Places with no recorded dates get '' — below any real
 // date string — so they fall to the bottom rather than corrupting the sort:

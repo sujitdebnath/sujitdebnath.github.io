@@ -17,7 +17,7 @@ export default function Research() {
                 delay={i * 0.06}
                 className="rounded-2xl border hairline p-6 transition-colors hover:border-marker"
               >
-                <p className={`eyebrow mb-2 ${r.status === 'Ongoing' ? 'text-marker' : ''}`}>{r.status}</p>
+                <p className={`eyebrow mb-2 ${r.status === 'Ongoing' ? '!text-marker' : ''}`}>{r.status}</p>
                 <h3 className="font-display text-lg text-ink dark:text-parchment">{r.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-ink-muted dark:text-parchment-muted">
                   {r.description}
