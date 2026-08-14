@@ -7,7 +7,7 @@ tags: [test]
 readTime: 1 min read
 cover: /images/blog/epitaph/cover.png
 featured: false
-status: draft
+# status: draft
 preview: Internal test post for round 11's distill/rich-content pipeline. Safe to delete once verified.
 type: distill
 ---

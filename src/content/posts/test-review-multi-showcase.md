@@ -7,7 +7,7 @@ tags: [test]
 readTime: 3 min read
 cover: /images/blog/khola-chithi-tonmoy/cover.png
 featured: false
-status: draft
+# status: draft
 preview: Internal test/reference post for round 39's multi-subject review-item extension. Safe to delete once verified.
 type: review
 mediaType: movie

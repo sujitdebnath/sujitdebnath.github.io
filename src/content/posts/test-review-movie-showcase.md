@@ -7,7 +7,7 @@ tags: [test]
 readTime: 3 min read
 cover: /images/blog/epitaph/cover.png
 featured: false
-status: draft
+# status: draft
 preview: Internal test/reference post for round 25's mediaType extension (movie variant) of the review post type. Safe to delete once verified.
 type: review
 mediaType: movie

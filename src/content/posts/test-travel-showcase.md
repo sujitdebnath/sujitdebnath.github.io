@@ -7,7 +7,7 @@ tags: [test]
 readTime: 1 min read
 cover: /images/blog/cheleta/cover.png
 featured: false
-status: draft
+# status: draft
 preview: Internal test post for round 11's travel post type. Safe to delete once verified.
 type: travel
 gallery:
