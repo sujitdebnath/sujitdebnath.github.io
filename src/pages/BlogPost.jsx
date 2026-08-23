@@ -1,7 +1,7 @@
 import { useMemo, useRef } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
-import { ArrowLeft, MapPin } from 'lucide-react'
+import { ArrowLeft, MapPin, PenLine } from 'lucide-react'
 import Reveal from '../components/Reveal.jsx'
 import { blogPosts } from '../data/posts.js'
 import { remarkPlugins, rehypePlugins } from '../lib/markdownPipeline.js'
@@ -126,6 +126,19 @@ function useMarkdownComponents(headings, bibliography, isReview, locations) {
                 </span>
               </div>
             </>
+          )
+        }
+        if (className === 'author-note') {
+          return (
+            <div className="author-note">
+              <div className="author-note__label flex items-center gap-2">
+                <PenLine size={24} strokeWidth={1.75} className="shrink-0 text-marker" />
+                <span className="font-display text-lg font-medium text-ink dark:text-parchment sm:text-xl">
+                  {props['data-label'] || 'A Note from the Author'}
+                </span>
+              </div>
+              <div className="author-note__body space-y-5">{children}</div>
+            </div>
           )
         }
         if (className === 'review-item') {

@@ -255,6 +255,25 @@ html.dark {
   @apply mt-6;
 }
 
+/* Author's-note block: a closing aside where the author speaks directly,
+   set apart from the story with its own top rule (not the • • • scene-break
+   hr — that signals "next scene," the wrong read for breaking the fourth
+   wall). Direct <p> children of .author-note__body are grandchildren of
+   .prose-content, so — same gotcha as .letter/.poem above — paragraph
+   rhythm is set explicitly rather than assumed inherited. */
+.prose-content .author-note {
+  @apply mt-12 border-t hairline pt-8;
+}
+.prose-content .author-note__label {
+  @apply mb-4;
+}
+.prose-content .author-note__body {
+  @apply font-serifText not-italic leading-relaxed text-ink-muted dark:text-parchment-muted;
+}
+.prose-content .author-note__body > p + p {
+  @apply mt-5;
+}
+
 .prose-content details {
   @apply my-6 rounded-xl border hairline px-4 py-3;
 }

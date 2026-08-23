@@ -238,6 +238,34 @@ add it per line by hand wherever the poem's own layout calls for it
 (there's no automatic indent rule; poems don't follow one predictable
 pattern).
 
+### Ending with a note from the author
+
+For a closing aside where you speak directly to the reader (context on
+where a story came from, a dedication, a content note), wrap it in
+`<div class="author-note" data-label="...">...</div>` — same
+raw-HTML-with-a-blank-line pattern as the blocks above, placed at the very
+end of the post, after the story's own final line:
+
+```md
+The story's last line.
+
+<div class="author-note" data-label="A Note from the Author">
+
+Whatever you want to say directly to the reader, as normal paragraphs...
+
+</div>
+```
+
+Renders as a distinct closing section — a top rule separates it from the
+story, with a small pen-icon label above the text. Deliberately **not**
+the `• • •` scene-break divider (that reads as "next scene," not "the
+author is speaking now"), and not the `.letter` block's card treatment
+(that's for in-story documents; this is you, outside the fiction).
+`data-label` is the small caption above the text — write it in whatever
+language/wording fits the post (defaults to "A Note from the Author" if
+omitted). No frontmatter field, no post-type restriction — works the same
+in `standard`/`distill`/`travel`/`review` posts.
+
 ## 5. Post types
 
 Set `type:` in the frontmatter to unlock extra chrome for a post. Omit it
