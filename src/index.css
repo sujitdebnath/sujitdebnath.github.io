@@ -302,8 +302,11 @@ html.dark {
    swings from phone to ultrawide-monitor extremes — height stays driven by
    viewport height, just with a narrower, calmer clamp() range now that it
    doesn't have to compensate for as wide a range of widths. */
+/* Height derives from width at WORLD_BOUNDS' aspect (TravelMap.jsx), so the
+   world fills the frame with no empty band. */
 .travel-map {
-  height: clamp(450px, 65vh, 650px);
+  aspect-ratio: 1.554;
+  height: auto;
   width: 100%;
 }
 /* Round 56: the fullscreen overlay (TravelMap.jsx) needs the map to fill its

@@ -5,6 +5,7 @@ import Reveal from '../components/Reveal.jsx'
 import Dropdown from '../components/blog/Dropdown.jsx'
 import TravelMap from '../components/travel/TravelMap.jsx'
 import { travelLog, lifeLocations } from '../data/travelLog.js'
+import { regionBounds } from '../data/mapBounds.js'
 import { continentColor, continentColors } from '../data/continents.js'
 import {
   formatMonthYear,
@@ -317,6 +318,14 @@ export default function TravelLog() {
   const hasAnyResults =
     filtered.length > 0 || Boolean(visibleLifeLocations.home) || Boolean(visibleLifeLocations.current)
 
+  // Real geographic bounds for the active continent/country filter (country
+  // wins when both are set — see regionBounds) instead of a marker-bounds
+  // fit, so e.g. filtering to "Germany" frames Germany itself rather than
+  // just whatever's tight around the handful of logged pins in it. Falls
+  // back to `null` for combos with no entry in mapBounds.js, which leaves
+  // TravelMap's own marker-bounds `autoFit` as the fit.
+  const focusBounds = useMemo(() => regionBounds(continent, country), [continent, country])
+
   const stats = useMemo(() => travelStats(travelLog, lifeLocations), [])
 
   // Round 65: the country → continent lookup now checks lifeLocations too,
@@ -472,6 +481,7 @@ export default function TravelLog() {
                     places={filtered}
                     lifeLocations={visibleLifeLocations}
                     autoFit={continent !== 'All' || country !== 'All'}
+                    focusBounds={focusBounds}
                   />
                 </div>
               )

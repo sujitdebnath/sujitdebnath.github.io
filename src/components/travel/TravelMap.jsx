@@ -1,21 +1,40 @@
-import { useEffect, useMemo, useState } from 'react'
-import { renderToStaticMarkup } from 'react-dom/server'
-import { MapContainer, TileLayer, Marker, Popup, Circle, useMap, useMapEvent } from 'react-leaflet'
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
-import { Link } from 'react-router-dom'
-import { Home, Maximize, Minimize, MapPin, Navigation } from 'lucide-react'
-import { useTheme } from '../../hooks/useTheme.jsx'
-import { continentColor } from '../../data/continents.js'
-import { formatMonthYear, formatPlaceName, formatVisitDates } from '../../lib/travel.js'
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import {
+  Globe,
+  Home,
+  MapPin,
+  Maximize,
+  Minimize,
+  Navigation,
+} from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import {
+  Circle,
+  MapContainer,
+  Marker,
+  Popup,
+  TileLayer,
+  useMap,
+  useMapEvent,
+} from "react-leaflet";
+import { Link } from "react-router-dom";
+import { continentColor } from "../../data/continents.js";
+import { useTheme } from "../../hooks/useTheme.jsx";
+import {
+  formatMonthYear,
+  formatPlaceName,
+  formatVisitDates,
+} from "../../lib/travel.js";
 
 // CARTO basemaps: Positron in light mode, Dark Matter in dark. Both are
 // OSM-derived, so both carry the same attribution as the GeoJSON map block.
 const TILES = {
-  light: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-  dark: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-}
-const ATTRIBUTION = '&copy; OpenStreetMap contributors &copy; CARTO'
+  light: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+  dark: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+};
+const ATTRIBUTION = "&copy; OpenStreetMap contributors &copy; CARTO";
 
 // Default view (round 49, fixed in round 50/52): the whole world, not a
 // bounds-fit to the current markers — that left the map opening already
@@ -55,9 +74,9 @@ const ATTRIBUTION = '&copy; OpenStreetMap contributors &copy; CARTO'
 // bigger" case instead, without making the *default* embedded state fight
 // for stability across the entire viewport-width spectrum.
 const WORLD_BOUNDS = [
-  [-58, -170],
-  [78, 170],
-]
+  [-58, -180],
+  [83, 180],
+];
 
 // Keeps panning from dragging the view into repeated-world-copy territory
 // too — the dynamic fit above handles the initial/resized view, this handles
@@ -66,16 +85,16 @@ const WORLD_BOUNDS = [
 const MAX_BOUNDS = [
   [-90, -180],
   [90, 180],
-]
+];
 
 // Pins are DivIcons rather than Leaflet's default teardrop image: a small
 // filled circle carrying a lucide glyph, tinted by continent (or the marker
 // accent for the two life locations). renderToStaticMarkup lets the same
 // lucide icons used across the site supply the glyph markup.
 function buildPin({ color, glyph, glyphColor, badge }) {
-  const badgeHtml = badge ? `<i class="travel-pin__badge">${badge}</i>` : ''
+  const badgeHtml = badge ? `<i class="travel-pin__badge">${badge}</i>` : "";
   return L.divIcon({
-    className: 'travel-pin-icon',
+    className: "travel-pin-icon",
     html:
       `<span class="travel-pin" style="background:${color};color:${glyphColor}">` +
       renderToStaticMarkup(glyph) +
@@ -83,12 +102,12 @@ function buildPin({ color, glyph, glyphColor, badge }) {
     iconSize: [26, 26],
     iconAnchor: [13, 13],
     popupAnchor: [0, -14],
-  })
+  });
 }
 
-const PIN_GLYPH_LIGHT = '#FAFAF9' // paper — glyph sitting on a continent tint
-const ACCENT = '#F5C518' // marker.DEFAULT
-const ACCENT_INK = '#17181A' // marker.ink
+const PIN_GLYPH_LIGHT = "#FAFAF9"; // paper — glyph sitting on a continent tint
+const ACCENT = "#F5C518"; // marker.DEFAULT
+const ACCENT_INK = "#17181A"; // marker.ink
 
 // Round 57: places get highlighted at *their own* location on click, not
 // their country's — a bundled country-borders dataset was tried first and
@@ -99,17 +118,45 @@ const ACCENT_INK = '#17181A' // marker.ink
 // the benefit. Just this one fixed-radius circle, every time: small enough
 // to read as "here, specifically," not "this whole region" (a 30km fallback
 // radius read as covering a huge swath of the surrounding area in practice).
-const HIGHLIGHT_RADIUS_METERS = 750
+const HIGHLIGHT_RADIUS_METERS = 2000;
+
+// home/current can share coordinates with a travel entry (the current
+// residence usually *is* one of the logged places) — nudge the life pin's
+// *icon* left by this many screen px in that case so both stay visible and
+// clickable (see PlaceMarkers below), without ever landing on the trip
+// pin's top-right visit-count badge. A pixel offset rather than a lat/lng
+// one so the visual gap between the two pins stays constant on screen at
+// any zoom level, instead of shrinking to nothing zoomed out or ballooning
+// zoomed in.
+//
+// Round 67: PlaceHighlight reads this too — the highlight circle is drawn
+// at the place's true, un-nudged lat/lng, which for a nudged life pin is
+// the *other* marker's position, not the icon's own visual spot. Sharing
+// this constant (and computeLifePinDx below) keeps the two in sync; the
+// circle applies the same px offset via the map's own projection to land
+// under the icon instead of the coordinate.
+const LIFE_PIN_NUDGE_PX = 22;
+
+function computeLifePinDx(loc, places) {
+  return places.some(
+    (p) => Math.abs(p.lat - loc.lat) < 0.05 && Math.abs(p.lng - loc.lng) < 0.05,
+  )
+    ? LIFE_PIN_NUDGE_PX
+    : 0;
+}
 
 function ContinentTag({ continent }) {
   return (
     <span
       className="travel-popup__tag"
-      style={{ color: continentColor(continent), borderColor: continentColor(continent) }}
+      style={{
+        color: continentColor(continent),
+        borderColor: continentColor(continent),
+      }}
     >
       {continent}
     </span>
-  )
+  );
 }
 
 // Round 63: a lightweight, neutral (not continent-colored, not the
@@ -122,16 +169,21 @@ function PlaceTypeTag({ children }) {
     <span className="travel-popup__tag hairline text-ink-muted dark:text-parchment-muted">
       {children}
     </span>
-  )
+  );
 }
 
 function PlacePopup({ place }) {
-  const hasVisits = Boolean(place.visitDates?.length)
-  const hasPosts = Boolean(place.posts?.length)
-  const isLandmark = place.placeType === 'landmark'
+  const hasVisits = Boolean(place.visitDates?.length);
+  const hasPosts = Boolean(place.posts?.length);
+  const isLandmark = place.placeType === "landmark";
 
   return (
-    <Popup className="travel-popup" minWidth={210} maxWidth={260} autoPanPadding={[24, 24]}>
+    <Popup
+      className="travel-popup"
+      minWidth={210}
+      maxWidth={260}
+      autoPanPadding={[24, 24]}
+    >
       {/* Round 57: tag-above-heading, matching the eyebrow-above-title
           pattern used everywhere else on the site — was two evenly-spaced
           lines (title first, tag after) with too much gap between them.
@@ -143,11 +195,13 @@ function PlacePopup({ place }) {
         {isLandmark && <PlaceTypeTag>Landmark</PlaceTypeTag>}
       </div>
       <p className="travel-popup__title">{formatPlaceName(place)}</p>
-      {place.summary && <p className="travel-popup__summary">{place.summary}</p>}
+      {place.summary && (
+        <p className="travel-popup__summary">{place.summary}</p>
+      )}
 
       {hasVisits && (
         <p className="travel-popup__meta">
-          <span className="travel-popup__label">Visits:</span>{' '}
+          <span className="travel-popup__label">Visits:</span>{" "}
           {formatVisitDates(place.visitDates)}
         </p>
       )}
@@ -159,7 +213,10 @@ function PlacePopup({ place }) {
           <ul>
             {place.posts.map((post) => (
               <li key={post.blogSlug}>
-                <Link to={`/blog/${post.blogSlug}`} className="travel-popup__link">
+                <Link
+                  to={`/blog/${post.blogSlug}`}
+                  className="travel-popup__link"
+                >
                   <span aria-hidden="true">→</span> {post.label}
                 </Link>
               </li>
@@ -168,12 +225,17 @@ function PlacePopup({ place }) {
         </div>
       )}
     </Popup>
-  )
+  );
 }
 
 function LifePopup({ heading, location, since }) {
   return (
-    <Popup className="travel-popup" minWidth={190} maxWidth={240} autoPanPadding={[24, 24]}>
+    <Popup
+      className="travel-popup"
+      minWidth={190}
+      maxWidth={240}
+      autoPanPadding={[24, 24]}
+    >
       {/* Round 62: badge + continent tag share one row (were stacked on
           separate lines) — items-center relies on both pills having the
           same box height, see .travel-popup__anchor's border-transparent
@@ -183,12 +245,16 @@ function LifePopup({ heading, location, since }) {
         <ContinentTag continent={location.continent} />
       </div>
       <p className="travel-popup__title">{formatPlaceName(location)}</p>
-      {location.note && <p className="travel-popup__summary">{location.note}</p>}
+      {location.note && (
+        <p className="travel-popup__summary">{location.note}</p>
+      )}
       {since && (
-        <p className="travel-popup__meta">Based here since {formatMonthYear(since)}</p>
+        <p className="travel-popup__meta">
+          Based here since {formatMonthYear(since)}
+        </p>
       )}
     </Popup>
-  )
+  );
 }
 
 // Keeps the viewport honest as filters narrow the set: refit whenever the
@@ -207,9 +273,10 @@ function LifePopup({ heading, location, since }) {
 // container between the bounded embedded size and the full viewport without
 // any extra wiring needed here: the class change alone triggers this
 // observer.
-function FitToView({ points, active }) {
-  const map = useMap()
-  const signature = points.map((p) => `${p.lat},${p.lng}`).join('|')
+function FitToView({ points, active, focusBounds, resetCount }) {
+  const map = useMap();
+  const signature = points.map((p) => `${p.lat},${p.lng}`).join("|");
+  const focusSignature = focusBounds ? JSON.stringify(focusBounds) : "";
 
   useEffect(() => {
     const fit = () => {
@@ -221,41 +288,56 @@ function FitToView({ points, active }) {
       // like it jumped too far per step. This is also why MapContainer no
       // longer gets a `bounds` prop directly (see below) — that path called
       // fitBounds without this invalidateSize sequencing at all.
-      map.invalidateSize()
-      if (active && points.length === 1) {
-        map.setView([points[0].lat, points[0].lng], 5, { animate: false })
+      map.invalidateSize();
+      map.closePopup();
+
+      const widthZoom = Math.log2(map.getSize().x / 256);
+      map.setMinZoom(0);
+
+      if (focusBounds) {
+        map.fitBounds(focusBounds, { padding: [32, 32], animate: false });
+      } else if (active && points.length === 1) {
+        map.setView([points[0].lat, points[0].lng], 5, { animate: false });
       } else if (active && points.length > 1) {
         map.fitBounds(
           points.map((p) => [p.lat, p.lng]),
-          { padding: [56, 56], maxZoom: 6, animate: false }
-        )
+          { padding: [56, 56], maxZoom: 6, animate: false },
+        );
       } else {
-        map.fitBounds(WORLD_BOUNDS, { animate: false })
+        const zoom = Math.max(map.getBoundsZoom(WORLD_BOUNDS), widthZoom);
+        const box = L.latLngBounds(WORLD_BOUNDS);
+        const mid = map
+          .project(box.getNorthWest(), zoom)
+          .add(map.project(box.getSouthEast(), zoom))
+          .divideBy(2);
+        map.setView(map.unproject(mid, zoom), zoom, { animate: false });
       }
-    }
 
-    const frame = requestAnimationFrame(fit)
-    const observer = new ResizeObserver(fit)
-    observer.observe(map.getContainer())
+      map.setMinZoom(widthZoom);
+    };
+
+    const frame = requestAnimationFrame(fit);
+    const observer = new ResizeObserver(fit);
+    observer.observe(map.getContainer());
 
     return () => {
-      cancelAnimationFrame(frame)
-      observer.disconnect()
-    }
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
     // Refit when the visible point set or fit-mode changes; the
     // ResizeObserver above covers size changes to the current fit target.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [signature, map, active])
+  }, [signature, map, active, focusSignature, resetCount]);
 
-  return null
+  return null;
 }
 
 // Clicking empty map background (not a marker — Leaflet stops marker click
 // events from bubbling to the map) is what "returning to the default view"
 // means here: clear whatever place is currently highlighted.
 function ClearSelectionOnMapClick({ onClear }) {
-  useMapEvent('click', onClear)
-  return null
+  useMapEvent("click", onClear);
+  return null;
 }
 
 // Round 65: home/current are now nullable — `null` when the active
@@ -264,51 +346,52 @@ function ClearSelectionOnMapClick({ onClear }) {
 // entries" choice over "always show regardless of filter." Every spot
 // below that used to assume both always exist now guards for null first.
 function PlaceMarkers({ places, lifeLocations, onSelect }) {
-  const map = useMap()
+  const map = useMap();
 
-  // Clicking a pin flies to it (Leaflet opens its popup as usual) and
-  // highlights that place with a small circle.
+  // Clicking a pin flies to it, opens its popup and highlights it.
   const flyTo = (event, place) => {
-    map.flyTo(event.latlng, Math.max(map.getZoom(), 6), { duration: 0.8 })
-    onSelect(place)
-  }
+    const marker = event.target;
+    map.invalidateSize();
 
-  const { home, current } = lifeLocations
+    const zoom = Math.max(map.getZoom(), 12);
+    const target = map.unproject(
+      map.project(event.latlng, zoom).subtract([0, map.getSize().y * 0.12]),
+      zoom,
+    );
 
-  // home/current can share coordinates with a travel entry (the current
-  // residence usually *is* one of the logged places). Nudge the life pin to
-  // the left in that case so both stay visible and clickable — left, so it
-  // never lands on the trip pin's top-right visit-count badge.
-  const offsetFor = (loc) =>
-    places.some(
-      (p) => Math.abs(p.lat - loc.lat) < 0.05 && Math.abs(p.lng - loc.lng) < 0.05
-    )
-      ? 22
-      : 0
+    map.once("moveend", () => marker.openPopup());
+    map.flyTo(target, zoom, { duration: 0.8 });
+    onSelect(place, zoom);
+  };
+
+  const { home, current } = lifeLocations;
+
+  const offsetFor = (loc) => computeLifePinDx(loc, places);
 
   // Icons are memoized because react-leaflet re-applies a freshly built icon
   // object on every render, which would rebuild the marker DOM (and close any
   // open popup) each time a filter or the theme changes.
   const placeIcons = useMemo(() => {
-    const map = {}
+    const map = {};
     for (const place of places) {
       map[place.id] = buildPin({
         color: continentColor(place.continent),
         glyphColor: PIN_GLYPH_LIGHT,
         glyph: <MapPin size={13} strokeWidth={2.25} />,
-        badge: place.visitDates?.length > 1 ? `×${place.visitDates.length}` : null,
-      })
+        badge:
+          place.visitDates?.length > 1 ? `×${place.visitDates.length}` : null,
+      });
     }
-    return map
-  }, [places])
+    return map;
+  }, [places]);
 
   const icons = useMemo(() => {
     const shifted = (icon, dx) => {
-      if (!dx) return icon
-      icon.options.iconAnchor = [13 + dx, 13]
-      icon.options.popupAnchor = [-dx, -14]
-      return icon
-    }
+      if (!dx) return icon;
+      icon.options.iconAnchor = [13 + dx, 13];
+      icon.options.popupAnchor = [-dx, -14];
+      return icon;
+    };
     return {
       home: home
         ? shifted(
@@ -317,7 +400,7 @@ function PlaceMarkers({ places, lifeLocations, onSelect }) {
               glyphColor: ACCENT_INK,
               glyph: <Home size={13} strokeWidth={2.25} />,
             }),
-            offsetFor(home)
+            offsetFor(home),
           )
         : null,
       current: current
@@ -327,12 +410,12 @@ function PlaceMarkers({ places, lifeLocations, onSelect }) {
               glyphColor: ACCENT_INK,
               glyph: <Navigation size={13} strokeWidth={2.25} />,
             }),
-            offsetFor(current)
+            offsetFor(current),
           )
         : null,
-    }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [home, current, places])
+  }, [home, current, places]);
 
   return (
     <>
@@ -367,19 +450,48 @@ function PlaceMarkers({ places, lifeLocations, onSelect }) {
           zIndexOffset={500}
           title={`Currently living — ${formatPlaceName(current)}`}
         >
-          <LifePopup heading="Currently living" location={current} since={current.since} />
+          <LifePopup
+            heading="Currently living"
+            location={current}
+            since={current.since}
+          />
         </Marker>
       )}
     </>
-  )
+  );
 }
 
 // Outlines the selected place itself — a small fixed-radius circle centered
 // exactly on its lat/lng. No fill or a very faint one, in the place's own
 // marker color (continent tint, or the marker accent for home/current).
+//
+// Round 67: for a nudged home/current pin (see LIFE_PIN_NUDGE_PX), "its
+// lat/lng" and "where its icon actually renders" are two different screen
+// points — the icon is nudged, the coordinate isn't. Centering on the raw
+// coordinate landed the circle on whatever other marker happens to sit at
+// that (shared) coordinate instead of under the clicked pin. `dx` mirrors
+// the icon's own px nudge through the map's current projection so the
+// circle's geographic center lands under the icon, not the coordinate.
+//
+// Round 68: that projection needs an explicit zoom, not the map's *live*
+// one — selecting a place re-renders this immediately, while flyTo (below)
+// is still mid-animation from wherever the map used to be (e.g. the
+// zoomed-out world view on first load). Projecting at the live zoom during
+// that gap put the circle wildly off-position (usually off-screen) on the
+// very first click; a second click "worked" only because by then the map
+// was already sitting at the destination zoom from the first flyTo. `zoom`
+// is the exact zoom flyTo is animating *to* (see PlaceMarkers), so the
+// projection is correct immediately, before the animation even starts.
 function PlaceHighlight({ selected }) {
-  if (!selected) return null
-  const { place, color } = selected
+  const map = useMap();
+  if (!selected) return null;
+  const { place, color, dx, zoom } = selected;
+  const center = dx
+    ? map.unproject(
+        map.project([place.lat, place.lng], zoom).subtract([dx, 0]),
+        zoom,
+      )
+    : [place.lat, place.lng];
 
   return (
     <Circle
@@ -387,41 +499,57 @@ function PlaceHighlight({ selected }) {
       // don't have one) so Leaflet remounts the circle cleanly between
       // places instead of trying to animate/diff between two positions.
       key={`${place.city}-${place.country}`}
-      center={[place.lat, place.lng]}
+      center={center}
       radius={HIGHLIGHT_RADIUS_METERS}
       interactive={false}
-      pathOptions={{ color, weight: 2, opacity: 0.9, fillColor: color, fillOpacity: 0.06 }}
+      pathOptions={{
+        color,
+        weight: 2,
+        opacity: 0.9,
+        fillColor: color,
+        fillOpacity: 0.06,
+      }}
     />
-  )
+  );
 }
 
-export default function TravelMap({ places, lifeLocations, autoFit }) {
-  const { theme } = useTheme()
-  const [selected, setSelected] = useState(null) // { place, color } | null
-  const [isFullscreen, setIsFullscreen] = useState(false)
+export default function TravelMap({
+  places,
+  lifeLocations,
+  autoFit,
+  focusBounds,
+}) {
+  const { theme } = useTheme();
+  const [selected, setSelected] = useState(null); // { place, color, dx, zoom } | null
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [resetCount, setResetCount] = useState(0);
 
   // Home/current belong in the fitted bounds whenever they're actually on
   // the map (round 65: they may now be `null`, filtered out like this).
   const fitPoints = useMemo(
-    () => [...places, lifeLocations.home, lifeLocations.current].filter(Boolean),
-    [places, lifeLocations]
-  )
+    () =>
+      [...places, lifeLocations.home, lifeLocations.current].filter(Boolean),
+    [places, lifeLocations],
+  );
 
   // The highlight circle is scoped to whatever's currently visible — if a
   // filter change (or toggling back from List) changes the marker set,
   // clear it rather than leaving a circle for a place that may no longer be
   // on screen.
   useEffect(() => {
-    setSelected(null)
-  }, [places, lifeLocations])
+    setSelected(null);
+  }, [places, lifeLocations]);
 
-  const selectPlace = (place) =>
+  const selectPlace = (place, zoom) => {
+    const isLife =
+      place === lifeLocations.home || place === lifeLocations.current;
     setSelected({
       place,
-      color: place === lifeLocations.home || place === lifeLocations.current
-        ? ACCENT
-        : continentColor(place.continent),
-    })
+      color: isLife ? ACCENT : continentColor(place.continent),
+      dx: isLife ? computeLifePinDx(place, places) : 0,
+      zoom,
+    });
+  };
 
   return (
     // `isolate` (plus the capped .leaflet-pane z-indices in index.css) keeps
@@ -436,22 +564,36 @@ export default function TravelMap({ places, lifeLocations, autoFit }) {
     <div
       className={
         isFullscreen
-          ? 'travel-map-wrap--fullscreen fixed inset-0 z-[100] isolate overflow-hidden bg-paper dark:bg-night'
-          : 'relative isolate overflow-hidden rounded-2xl border hairline'
+          ? "travel-map-wrap--fullscreen fixed inset-0 z-[100] isolate overflow-hidden bg-paper dark:bg-night"
+          : "relative isolate mx-auto max-w-[63rem] overflow-hidden rounded-2xl border hairline"
       }
     >
-      <button
-        type="button"
-        onClick={() => setIsFullscreen((f) => !f)}
-        aria-label={isFullscreen ? 'Exit fullscreen' : 'View map fullscreen'}
-        className="absolute right-3 top-3 z-[1000] flex h-9 w-9 items-center justify-center rounded-full border hairline bg-paper-surface text-ink-muted shadow-sm transition-colors hover:text-ink dark:bg-night-surface dark:text-parchment-muted dark:hover:text-parchment"
-      >
-        {isFullscreen ? (
-          <Minimize size={16} strokeWidth={1.75} />
-        ) : (
-          <Maximize size={16} strokeWidth={1.75} />
-        )}
-      </button>
+      <div className="absolute right-3 top-3 z-[1000] flex flex-col gap-2">
+        <button
+          type="button"
+          onClick={() => setIsFullscreen((f) => !f)}
+          aria-label={isFullscreen ? "Exit fullscreen" : "View map fullscreen"}
+          className="flex h-9 w-9 items-center justify-center rounded-full border hairline bg-paper-surface text-ink-muted shadow-sm transition-colors hover:text-ink dark:bg-night-surface dark:text-parchment-muted dark:hover:text-parchment"
+        >
+          {isFullscreen ? (
+            <Minimize size={16} strokeWidth={1.75} />
+          ) : (
+            <Maximize size={16} strokeWidth={1.75} />
+          )}
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setSelected(null);
+            setResetCount((n) => n + 1);
+          }}
+          aria-label="Reset map view"
+          title="Reset view"
+          className="flex h-9 w-9 items-center justify-center rounded-full border hairline bg-paper-surface text-ink-muted shadow-sm transition-colors hover:text-ink dark:bg-night-surface dark:text-parchment-muted dark:hover:text-parchment"
+        >
+          <Globe size={16} strokeWidth={1.75} />
+        </button>
+      </div>
       <MapContainer
         // Round 55: this used to be `bounds={WORLD_BOUNDS}`, which made
         // react-leaflet call fitBounds internally at map-creation time — a
@@ -465,15 +607,6 @@ export default function TravelMap({ places, lifeLocations, autoFit }) {
         // matter.
         center={[20, 10]}
         zoom={2}
-        // Round 56: at the new bounded container size, a plain fitBounds to
-        // WORLD_BOUNDS landed noticeably more zoomed-out than the reference
-        // (no country names legible) — minZoom=3 is a floor that keeps the
-        // world view at a more legible zoom level, exactly as anticipated.
-        // Safe against the repeated-world-copy bug rounds 52/53 fixed: at
-        // zoom 3 the world is already wider (2048px) than this container's
-        // ~1280px max-width, so this floor only ever zooms *in* relative to
-        // what a bare fit would pick, never creates leftover horizontal room.
-        minZoom={3}
         zoomSnap={0.25}
         maxBounds={MAX_BOUNDS}
         maxBoundsViscosity={1.0}
@@ -498,12 +631,22 @@ export default function TravelMap({ places, lifeLocations, autoFit }) {
           url={TILES[theme] || TILES.light}
           attribution={ATTRIBUTION}
           noWrap
+          bounds={MAX_BOUNDS}
         />
-        <FitToView points={fitPoints} active={autoFit} />
-        <PlaceMarkers places={places} lifeLocations={lifeLocations} onSelect={selectPlace} />
+        <FitToView
+          points={fitPoints}
+          active={autoFit}
+          focusBounds={focusBounds}
+          resetCount={resetCount}
+        />
+        <PlaceMarkers
+          places={places}
+          lifeLocations={lifeLocations}
+          onSelect={selectPlace}
+        />
         <ClearSelectionOnMapClick onClear={() => setSelected(null)} />
         <PlaceHighlight selected={selected} />
       </MapContainer>
     </div>
-  )
+  );
 }
