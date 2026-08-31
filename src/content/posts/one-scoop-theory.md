@@ -7,7 +7,7 @@ subcategories: [Essays]
 tags: [satire, humor, self-care]
 readTime: 5 min read
 cover: /images/blog/one-scoop-theory/cover.png
-featured: true
+featured: false
 preview: >-
   The world constantly tells you to be productive, heal faster, earn more,
   become more. Sometimes, all you really need is five quiet minutes and one
