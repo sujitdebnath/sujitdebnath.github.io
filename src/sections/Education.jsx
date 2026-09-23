@@ -6,7 +6,7 @@ export default function Education() {
   return (
     <section id="education" className="px-6 py-10 sm:py-12">
       <div className="mx-auto max-w-content">
-        <SectionHeading eyebrow="Education" title="Where I've studied" />
+        <SectionHeading eyebrow="Education" title="Where I've studied" note="Newest first" />
 
         <ol className="relative">
           <div

@@ -5,7 +5,6 @@ date: "2026-09-01"
 category: Writing
 subcategories: [Fiction, Stories]
 tags: [love, regret, struggle, nostalgia]
-readTime: 22 min read
 cover: /images/blog/icarus/cover.png
 featured: true
 preview: >-

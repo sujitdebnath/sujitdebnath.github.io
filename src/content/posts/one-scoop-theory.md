@@ -5,7 +5,6 @@ date: "2026-08-05"
 category: Writing
 subcategories: [Essays]
 tags: [satire, humor, self-care]
-readTime: 5 min read
 cover: /images/blog/one-scoop-theory/cover.png
 featured: false
 preview: >-
@@ -93,8 +92,6 @@ I've learned something strange over the years.
 You don't always have to earn kindness.
 
 Sometimes, you can simply buy one scoop of ice cream for yourself.
-
-No promotion required.
 
 No milestone required.
 

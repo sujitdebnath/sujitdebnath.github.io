@@ -7,7 +7,6 @@ date: "2025-09-14"
 category: Life
 subcategories: [Memories, Relationships]
 tags: [friendship, love, nostalgia]
-readTime: 5 min read
 cover: /images/blog/khola-chithi-tonmoy/cover.png
 featured: false
 preview: >-

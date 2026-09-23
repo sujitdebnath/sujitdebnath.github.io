@@ -24,7 +24,6 @@ date: 2026-01-01
 category: Life
 subcategories: [Memories, Relationships]
 tags: [friendship, nostalgia]
-readTime: 5 min read
 cover: /images/blog/my-new-post/cover.jpg
 featured: false
 preview: A one-to-two sentence teaser shown in the post list and cards.
@@ -59,6 +58,10 @@ preview: A one-to-two sentence teaser shown in the post list and cards.
   the 3 most recent posts regardless of this flag). `false` (or omitted)
   means it only appears in the main post list.
 - **cover** — path to the cover image, see below.
+- **readTime** — not a field you set. It's calculated automatically from
+  the post body's word count (`src/lib/readTime.js`): roughly
+  `words ÷ 200` plus a flat 2-minute buffer, rounded to the nearest
+  minute. Nothing to do here — just write the post.
 - **type** — `standard` (default, can be omitted), `distill`, `travel`, or
   `review`. See "Post types" below.
 - **status** — `draft` while you're still writing, omitted (or
@@ -162,6 +165,19 @@ syntax as above) in `<div class="photo-group">...</div>`:
 <img src="/images/blog/my-new-post/photo1.jpg" alt="First photo" class="img-tall" />
 <img src="/images/blog/my-new-post/photo2.jpg" alt="Second photo" class="img-tall" />
 <img src="/images/blog/my-new-post/photo3.jpg" alt="Third photo" class="img-tall" />
+</div>
+```
+
+Add `data-caption="..."` on the wrapping div for one caption under the
+whole grid (same small centered style as a standalone image's caption) —
+skip it to leave the group uncaptioned. This is separate from each photo's
+own `alt` text, which is still used for accessibility and the lightbox but
+isn't shown inline for grouped photos:
+
+```md
+<div class="photo-group" data-caption="An afternoon wandering Lyon's old town">
+<img src="/images/blog/my-new-post/photo1.jpg" alt="First photo" class="img-tall" />
+<img src="/images/blog/my-new-post/photo2.jpg" alt="Second photo" class="img-tall" />
 </div>
 ```
 

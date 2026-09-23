@@ -4,7 +4,6 @@ subtitle: Throwaway post exercising every rich content type from round 11
 date: 2026-08-01
 category: Technology
 tags: [test]
-readTime: 1 min read
 cover: /images/blog/epitaph/cover.png
 featured: false
 # status: draft

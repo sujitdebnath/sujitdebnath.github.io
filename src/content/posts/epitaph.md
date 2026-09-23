@@ -5,7 +5,6 @@ date: "2025-10-20"
 category: Writing
 subcategories: [Fiction, Stories]
 tags: [love, loss, nostalgia, family]
-readTime: 16 min read
 cover: /images/blog/epitaph/cover.png
 featured: true
 preview: >-

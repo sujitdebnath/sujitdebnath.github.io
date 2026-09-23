@@ -4,7 +4,6 @@ subtitle: A review of a fictional film — round 25's mediaType extension to the
 date: 2026-08-02
 category: Technology
 tags: [test]
-readTime: 3 min read
 cover: /images/blog/epitaph/cover.png
 featured: false
 # status: draft

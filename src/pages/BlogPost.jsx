@@ -64,6 +64,29 @@ function extractGroupPhotos(node) {
     })
 }
 
+// The `.location-marker` targets carry `scroll-mt-24`, which is enough for
+// the sticky nav on a direct URL/hash load (Layout.jsx's scrollIntoView
+// effect only fires on a real hash *change*, so it never runs at all when
+// the clicked location matches the hash already in the URL — re-clicking
+// the active pill, or clicking after landing on that hash from an external
+// link). Driving the scroll from the click itself, measuring the nav's
+// actual rendered height, sidesteps both that dead-click case and any
+// mismatch between the guessed scroll-mt-24 offset and the real nav height.
+function jumpToLocation(event, slug) {
+  if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+    return
+  }
+  const target = document.getElementById(slug)
+  if (!target) return
+  event.preventDefault()
+
+  const nav = document.querySelector('header')
+  const navHeight = nav ? nav.getBoundingClientRect().height : 0
+  const top = target.getBoundingClientRect().top + window.scrollY - navHeight - 24
+  window.scrollTo({ top, behavior: 'smooth' })
+  window.history.pushState(null, '', `#${slug}`)
+}
+
 function LocationNav({ locations }) {
   return (
     <nav aria-label="Trip stops" className="location-nav flex flex-wrap gap-2">
@@ -71,6 +94,7 @@ function LocationNav({ locations }) {
         <a
           key={location.slug}
           href={`#${location.slug}`}
+          onClick={(event) => jumpToLocation(event, location.slug)}
           className="rounded-full border hairline px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.1em] text-ink-muted transition-colors hover:border-marker dark:text-parchment-muted"
         >
           {location.text}
@@ -112,7 +136,9 @@ function useMarkdownComponents(headings, bibliography, isReview, locations) {
       code: CodeInline,
       div: ({ node, className, children, ...props }) => {
         if (className === 'photo-group') {
-          return <PhotoGroup photos={extractGroupPhotos(node)} />
+          return (
+            <PhotoGroup photos={extractGroupPhotos(node)} caption={props['data-caption']} />
+          )
         }
         if (className === 'location') {
           const isFirst = locations[0]?.slug === props.id

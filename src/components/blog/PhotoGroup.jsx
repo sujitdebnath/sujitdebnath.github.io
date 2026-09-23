@@ -13,7 +13,12 @@ import TileGrid from './TileGrid.jsx'
 // empty, which the fixed-row-height grid already handles cleanly.
 const COLUMNS_CLASS = 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4'
 
-export default function PhotoGroup({ photos }) {
+// Same treatment as a standalone image's figcaption (see IMG_CAPTION_CLASS
+// in BlogPost.jsx) — one caption for the whole group, not per-photo.
+const CAPTION_CLASS =
+  'mx-auto mt-3 max-w-prose px-6 text-center font-mono text-[12px] text-ink-muted dark:text-parchment-muted'
+
+export default function PhotoGroup({ photos, caption }) {
   const [activeIndex, setActiveIndex] = useState(null)
 
   if (!photos?.length) return null
@@ -21,6 +26,7 @@ export default function PhotoGroup({ photos }) {
   return (
     <div className="photo-group-block">
       <TileGrid photos={photos} columnsClassName={COLUMNS_CLASS} onSelect={setActiveIndex} />
+      {caption && <p className={CAPTION_CLASS}>{caption}</p>}
       <Lightbox
         gallery={photos}
         activeIndex={activeIndex}

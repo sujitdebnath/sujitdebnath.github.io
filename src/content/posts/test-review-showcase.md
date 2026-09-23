@@ -4,7 +4,6 @@ subtitle: Throwaway post exercising the generalized review post type
 date: 2026-08-02
 category: Technology
 tags: [test]
-readTime: 1 min read
 cover: /images/blog/khola-chithi-tonmoy/cover.png
 featured: false
 # status: draft

@@ -6,6 +6,7 @@ if (typeof window !== 'undefined' && !window.Buffer) {
 }
 
 import matter from 'gray-matter'
+import { calculateReadTime } from '../lib/readTime.js'
 
 // Every post lives as one Markdown file in src/content/posts/ — see the
 // README there for the authoring guide. The filename becomes the slug.
@@ -40,7 +41,7 @@ export const blogPosts = Object.entries(modules)
       category: data.category,
       subcategories: data.subcategories || [],
       tags: data.tags || [],
-      readTime: data.readTime,
+      readTime: calculateReadTime(content),
       cover: data.cover,
       featured: Boolean(data.featured),
       preview: data.preview,

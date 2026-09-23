@@ -4,7 +4,6 @@ subtitle: A round 39 test post — multi-subject reviews via repeatable review-i
 date: 2026-08-04
 category: Technology
 tags: [test]
-readTime: 3 min read
 cover: /images/blog/khola-chithi-tonmoy/cover.png
 featured: false
 # status: draft

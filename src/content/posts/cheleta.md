@@ -5,7 +5,6 @@ date: "2025-08-15"
 category: Writing
 subcategories: [Fiction, Stories]
 tags: [mental-health, depression, loneliness]
-readTime: 10 min read
 cover: /images/blog/cheleta/cover.png
 featured: true
 preview: >-

@@ -4,7 +4,6 @@ subtitle: Throwaway post exercising the travel post type's photo gallery
 date: 2026-08-01
 category: Technology
 tags: [test]
-readTime: 1 min read
 cover: /images/blog/cheleta/cover.png
 featured: false
 # status: draft
@@ -199,4 +198,16 @@ Another combo:
 <img src="/images/blog/test/eiffel-tower-2.jpg" alt="Round 40 photo 2 — tall tile" class="img-tall" />
 <img src="/images/blog/cheleta/cover.png" alt="Round 40 photo 3 — tall tile" class="img-tall" />
 <img src="/images/blog/khola-chithi-tonmoy/cover.png" alt="Round 40 photo 3 — tall tile" class="img-wide" />
+</div>
+
+## Round 69 — photo-group caption
+
+A `data-caption` on the group's wrapping div should render one small
+centered caption below the whole grid, styled the same as a standalone
+image's caption — separate from each photo's own `alt` text below.
+
+<div class="photo-group" data-caption="An afternoon wandering Lyon's old town">
+<img src="/images/blog/epitaph/cover.png" alt="Lyon photo 1 — large tile" class="img-large" />
+<img src="/images/blog/khola-chithi-tonmoy/cover.png" alt="Lyon photo 2 — tall tile" class="img-tall" />
+<img src="/images/blog/khola-chithi-tonmoy/cover.png" alt="Lyon photo 3 — tall tile" class="img-tall" />
 </div>
